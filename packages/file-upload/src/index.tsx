@@ -13,9 +13,9 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import VideocamIcon from '@mui/icons-material/Videocam';
-import AudiotrackIcon from '@mui/icons-material/Audiotrack';
-import ImageIcon from '@mui/icons-material/Image';
+import { fileProcessing } from "./utils/fileOptions";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
 
 export type RootState = {files: SelectedFile[]};
 export type AppDispatch = () => (action: any) => any;
@@ -35,21 +35,9 @@ export default function Files(props: ReduxProps) {
     <BoxWrap width={50}>
       <TabHeader
         title="Upload and process files"
-        subtitle="Add (very large) files to your dataset, add additional metadata per file, and select processing options."
+        subtitle="Add (very large) files to your dataset, add additional metadata per file, and select processing options. Processed files will be added to your dataset automatically."
       />
-      <Feature
-        title="Currently supported processing options"
-        items={[
-          { 
-            title: "Automatically create an AI generated transcription in txt format.",
-            files: ["video", "audio"],
-          },
-          { 
-            title: "Generate thumbnails",
-            files: ["video", "images"],
-          },
-        ]}
-      />
+      <Feature />
       <FileUpload {...props} />
       <FileTable {...props} />
       <Button 
@@ -98,30 +86,22 @@ function FileUploader({useAppSelector, useAppDispatch}: ReduxProps) {
   return null;
 };
 
-function Feature({ title, items }: { title: string; items: { title: string; files: string[] }[] }) {
+function Feature() {
   return (
-    <>
+    <Box mb={2}>
       <Typography variant="h6" sx={{ fontSize: "1rem" }}>
-        {title}
+        Currently supported processing options
       </Typography>
       <List dense={true}>
-        {items.map((item, index) => (
+        {fileProcessing.map((item, index) => (
           <ListItem key={index} disableGutters>
-            <ListItemIcon>
-              { item.files.map((fileType) => (
-                fileType === "video" ? 
-                <VideocamIcon key={fileType} /> :
-                fileType === "audio" ?
-                <AudiotrackIcon key={fileType} /> :
-                fileType === "images" || fileType === "image" ?
-                <ImageIcon key={fileType} /> : 
-                null
-              )) }
+            <ListItemIcon sx={{ minWidth: 36 }}>
+              { item.icon }
             </ListItemIcon>
-            <ListItemText primary={item.title} />
+            <ListItemText primary={<Stack spacing={1} direction="row" alignItems="center" ><span>{item.description}</span>{item.help}</Stack>} />
           </ListItem>
         ))}
       </List>
-    </>
+    </Box>
   );
 }

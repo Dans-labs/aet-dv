@@ -1,15 +1,30 @@
-// Defines actions a user can select for file processing and roles
+import SubtitlesIcon from '@mui/icons-material/Subtitles';
+import ImageIcon from '@mui/icons-material/Image';
+import { InfoTooltip } from "@dans-dv/guidance";
+import Typography from '@mui/material/Typography';
 
+// Defines actions a user can select for file processing and roles
 export const fileProcessing = [
   {
     value: "create_thumbnail",
     label: "Create thumbnail",
     for: ["video", "images"],
+    icon: <ImageIcon />,
+    description: "Generate a thumbnail image from a video or image file.",
+    help: <InfoTooltip color="info">Thumbnail is generated from the first frame of the video or image.</InfoTooltip>,
   },
   {
     value: "transcribe_audio",
     label: "Generate audio transcription",
     for: ["video", "audio"],
+    icon: <SubtitlesIcon />,
+    description: "Create an AI text transcription from a audio or video file.",
+    help: (
+      <InfoTooltip color="info">
+        <Typography gutterBottom>Transcription is done using AI and may not be 100% accurate. Be sure to double check results.</Typography>
+        <Typography>Processing can take a long time, depending on audio length. Keep an eye on the progress indicator after your file is done uploading.</Typography>
+      </InfoTooltip>
+    ),
   },
 ];
 

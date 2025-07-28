@@ -21,7 +21,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { useFetchGroupedListQuery } from "./api/dansFormats";
 import type { ReduxProps, AppDispatch } from "./";
-import type { SelectedFile } from "./FileUpload";
+import type { SelectedFile, FileActions } from "./FileUpload";
 import { findFileGroup } from "./utils/fileHelpers";
 import Typography from "@mui/material/Typography";
 
@@ -53,7 +53,7 @@ const FileTable = ({ useAppDispatch, useAppSelector }: ReduxProps) => {
     : null;
 };
 
-const FileActionOptions = ({ file, type, useAppDispatch }: {file: any; type: any; useAppDispatch: AppDispatch }) => {
+const FileActionOptions = ({ file, type, useAppDispatch }: {file: SelectedFile; type: "process" | "role"; useAppDispatch: AppDispatch }) => {
   const dispatch = useAppDispatch();
   // Need to check the type of file and provide valid processing options
   const { data } = useFetchGroupedListQuery(null);
@@ -78,7 +78,7 @@ const FileActionOptions = ({ file, type, useAppDispatch }: {file: any; type: any
           setFileMeta({
             name: file.name,
             type: type,
-            value: newValue,
+            value: type === "process" ? ((newValue as FileActions[]).map((v) => ({ value: v.value, label: v.label})) || []) : newValue as FileActions,
           }),
         )
       }
