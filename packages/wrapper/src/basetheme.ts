@@ -30,7 +30,7 @@ export function baseTheme(shadowRootElement: HTMLElement) {
           },
           styleOverrides: {
             root: {
-              zIndex: 9999,
+              zIndex: 100,
             }
           }
         },

@@ -24,6 +24,11 @@ export type FileActions = {
   value: string;
   for?: string[];
 }
+export type AudioProcessingOptions = {
+  sourceLanguage?: string;
+  diarisation?: boolean;
+  speakers?: number;
+};
 export type FileLocation = "local" | "online";
 export type SelectedFile = {
   name: string;
@@ -35,6 +40,7 @@ export type SelectedFile = {
   private?: boolean;
   role?: FileActions;
   process?: FileActions[];
+  audioProcessing?: AudioProcessingOptions;
   valid?: boolean;
   embargo?: string;
   submitProgress?: number;

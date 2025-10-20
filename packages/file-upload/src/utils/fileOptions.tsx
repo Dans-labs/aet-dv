@@ -51,7 +51,7 @@ export const fileRoles = [
   },
   {
     value: "dissemination_copy",
-    label: "dissemination copy",
+    label: "Dissemination copy",
   },
   {
     value: "image_file",

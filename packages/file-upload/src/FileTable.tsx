@@ -24,6 +24,7 @@ import type { ReduxProps, AppDispatch } from "./";
 import type { SelectedFile, FileActions } from "./FileUpload";
 import { findFileGroup } from "./utils/fileHelpers";
 import Typography from "@mui/material/Typography";
+import { AudioProcessing } from "./FileProcessing";
 
 const FileTable = ({ useAppDispatch, useAppSelector }: ReduxProps) => {
   const selectedFiles = useAppSelector<SelectedFile[]>(getFiles);
@@ -177,6 +178,13 @@ const FileTableRow = ({ file, useAppDispatch }: {file: SelectedFile; useAppDispa
           <FileActionOptions type="process" file={file} useAppDispatch={useAppDispatch} />
         </TableCell>
       </TableRow>
+      {file.process && file.process.length > 0 && file.process.map(process =>
+        <TableRow key={`${file.name}-process-row-${process.value}`}>
+          { process.value === "transcribe_audio" &&
+            <AudioProcessing file={file} useAppDispatch={useAppDispatch} />
+          }
+        </TableRow>
+      )}
       {file.status && 
         <TableRow>
           <UploadProgress file={file} key={`progress-${file.name}`} />
@@ -234,5 +242,7 @@ const UploadProgress = ({ file }: { file: SelectedFile }) => {
     </TableCell>
   );
 };
+
+
 
 export default FileTable;
