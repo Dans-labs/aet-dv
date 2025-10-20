@@ -22,7 +22,7 @@ import Stack from "@mui/material/Stack";
 import { useFetchGroupedListQuery } from "./api/dansFormats";
 import type { ReduxProps, AppDispatch } from "./";
 import type { SelectedFile, FileActions } from "./FileUpload";
-import { findFileGroup } from "./utils/fileHelpers";
+import { findFileGroup, isDisabled } from "./utils/fileHelpers";
 import Typography from "@mui/material/Typography";
 import { AudioProcessing } from "./FileProcessing";
 
@@ -58,6 +58,7 @@ const FileActionOptions = ({ file, type, useAppDispatch }: {file: SelectedFile; 
   const dispatch = useAppDispatch();
   // Need to check the type of file and provide valid processing options
   const { data } = useFetchGroupedListQuery(null);
+  const disabled = isDisabled(file);
   
   const typeKey =
     file.name && data ? findFileGroup(file.name.split(".").pop(), data) : "";
@@ -92,12 +93,14 @@ const FileActionOptions = ({ file, type, useAppDispatch }: {file: SelectedFile; 
       options={options}
       value={file[type] || (type === "process" ? [] : null)}
       isOptionEqualToValue={(option, value) => option.value === value.value}
+      disabled={disabled}
     />
   );
 };
 
 const FileTableRow = ({ file, useAppDispatch }: {file: SelectedFile; useAppDispatch: AppDispatch}) => {
   const dispatch = useAppDispatch();
+  const disabled = isDisabled(file);
 
   // Handle progress and manually retrying/restarting of file uploads
   const handleSingleFileUpload = () => {
@@ -169,6 +172,7 @@ const FileTableRow = ({ file, useAppDispatch }: {file: SelectedFile; useAppDispa
                 }),
               )
             }
+            disabled={disabled}
           />
         </TableCell>
         <TableCell sx={{ p: 1, minWidth: 150 }}>

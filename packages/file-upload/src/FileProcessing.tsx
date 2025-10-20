@@ -12,6 +12,7 @@ import TextField from '@mui/material/TextField';
 import { setFileMeta } from "./slice";
 import { AppDispatch } from "./";
 import SubtitlesIcon from '@mui/icons-material/Subtitles';
+import { isDisabled } from "./utils/fileHelpers";
 
 const supportedLanguages = [
   { name: 'Dutch', id: 'nl' },
@@ -28,6 +29,7 @@ const supportedLanguages = [
 
 export const AudioProcessing = ({ file, useAppDispatch }: { file: SelectedFile, useAppDispatch: AppDispatch }) => {
   const dispatch = useAppDispatch();
+  const disabled = isDisabled(file);
 
   return (
     <TableCell colSpan={6}>
@@ -45,6 +47,7 @@ export const AudioProcessing = ({ file, useAppDispatch }: { file: SelectedFile, 
             id="source-language-select"
             value={file.audioProcessing?.sourceLanguage || ''}
             label="Source language"
+            disabled={disabled}
             onChange={
               (e) => {
                 dispatch(setFileMeta({
@@ -77,6 +80,7 @@ export const AudioProcessing = ({ file, useAppDispatch }: { file: SelectedFile, 
                   },
                 }));
               }}
+              disabled={disabled}
             />
           } 
           label="Diarisation" 
@@ -98,6 +102,7 @@ export const AudioProcessing = ({ file, useAppDispatch }: { file: SelectedFile, 
                 speakers: parseInt(e.target.value) || 0,
               },
             }))}
+            disabled={disabled}
           />
         }
       </Stack>

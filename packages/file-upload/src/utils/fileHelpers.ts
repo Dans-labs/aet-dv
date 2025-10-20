@@ -1,4 +1,5 @@
 import type { GroupedDataObject } from "../api/dansFormats";
+import type { SelectedFile } from "../FileUpload";
 
 // Add more from http://en.wikipedia.org/wiki/List_of_file_signatures
 // Not using this at the moment
@@ -23,4 +24,8 @@ export function findFileGroup(
   return (
     Object.keys(data).find((key: string) => data[key].includes(ext)) || null
   );
+}
+
+export function isDisabled(file: SelectedFile) {
+  return file.hasOwnProperty("status") && file.status !== "error";
 }
