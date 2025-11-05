@@ -1,5 +1,5 @@
-# React plugin for Dataverse
-This plugin lets you configure advanced editing functions for metadata inside Dataverse.
+# Advanced Editing Toolkit - a React plugin for Dataverse
+This plugin is designed to add advanced editing functions for metadata inside Dataverse. In combination with the ACP, this includes functionality like large (TUS) file uploads, file processing (e.g. automatic speech recognition), automatic software registration with Software Heritage, an interactive map with coordinate conversion, keyword management, etc.
 
 ## How to setup your dev env
 * [PNPM](https://pnpm.io/installation) must be installed on your system
