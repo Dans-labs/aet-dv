@@ -8,14 +8,14 @@ export const fileProcessing = [
   {
     value: "create_thumbnail",
     label: "Create thumbnail",
-    for: ["video", "images"],
+    for: ["video"],
     icon: <ImageIcon />,
-    description: "Generate a thumbnail image from a video or image file.",
+    description: "Generate a thumbnail image from a video file.",
     help: <InfoTooltip color="info">Thumbnail is generated from the first frame of the video or image.</InfoTooltip>,
   },
   {
     value: "transcribe_audio",
-    label: "Generate audio transcription",
+    label: "Generate transcription",
     for: ["video", "audio"],
     icon: <SubtitlesIcon />,
     description: "Create an AI text transcription from a audio or video file.",

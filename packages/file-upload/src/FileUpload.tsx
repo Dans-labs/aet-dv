@@ -29,6 +29,10 @@ export type AudioProcessingOptions = {
   diarisation?: boolean;
   speakers?: number;
 };
+export type ThumbnailProcessingOptions = {
+  number?: number;
+  file?: string;
+};
 export type FileLocation = "local" | "online";
 export type SelectedFile = {
   name: string;
@@ -41,6 +45,7 @@ export type SelectedFile = {
   role?: FileActions;
   process?: FileActions[];
   audioProcessing?: AudioProcessingOptions;
+  thumbnailProcessing?: ThumbnailProcessingOptions;
   valid?: boolean;
   embargo?: string;
   submitProgress?: number;

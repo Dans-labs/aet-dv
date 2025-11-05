@@ -70,7 +70,10 @@ export default function MenuButton({ config }: { config: MenuConfig }) {
           ))}
         </Menu>
 
-        <Drawer open={edit !== null} onClose={() => setEdit(null)}>
+        <Drawer open={edit !== null} onClose={(_event, reason) => {
+          if (reason === "backdropClick") return
+          setEdit(null);
+        }}>
           <Stack direction="row">
             <List sx={{ borderRight: '1px solid #ccc', position: 'fixed', height: '100vh'}}>
               <ListItem disablePadding disableGutters sx={{ mb: 1 }}>

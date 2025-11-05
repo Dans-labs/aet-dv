@@ -24,7 +24,7 @@ import type { ReduxProps, AppDispatch } from "./";
 import type { SelectedFile, FileActions } from "./FileUpload";
 import { findFileGroup, isDisabled } from "./utils/fileHelpers";
 import Typography from "@mui/material/Typography";
-import { AudioProcessing } from "./FileProcessing";
+import { AudioProcessing, ThumbnailProcessing } from "./FileProcessing";
 
 const FileTable = ({ useAppDispatch, useAppSelector }: ReduxProps) => {
   const selectedFiles = useAppSelector<SelectedFile[]>(getFiles);
@@ -38,9 +38,9 @@ const FileTable = ({ useAppDispatch, useAppSelector }: ReduxProps) => {
               <TableCell sx={{ p: 1, width: 10 }} />
               <TableCell sx={{ p: 1 }}>File name</TableCell>
               <TableCell sx={{ p: 1 }}>Size</TableCell>
-              <TableCell sx={{ p: 1, width: 10 }}>Private</TableCell>
-              <TableCell sx={{ p: 1, width: 230 }}>Role</TableCell>
-              <TableCell sx={{ p: 1, width: 230 }}>Processing</TableCell>
+              <TableCell sx={{ p: 1 }}>Private</TableCell>
+              <TableCell sx={{ p: 1 }}>Role</TableCell>
+              <TableCell sx={{ p: 1 }}>Processing</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -88,12 +88,32 @@ const FileActionOptions = ({ file, type, useAppDispatch }: {file: SelectedFile; 
         <TextField
           {...params}
           label={type === "process" ? "Select options" : "Select role"}
+          sx={{
+            "& .MuiInputBase-input": {
+              fontSize: "0.875rem", /* input + placeholder */
+            },
+            "& .MuiInputLabel-root": {
+              fontSize: "0.875rem", /* label when resting */
+            },
+          }}
         />
       )}
       options={options}
       value={file[type] || (type === "process" ? [] : null)}
       isOptionEqualToValue={(option, value) => option.value === value.value}
       disabled={disabled}
+      slotProps={{
+        listbox: {
+          sx: {
+            "& .MuiAutocomplete-option": { fontSize: "0.875rem" }, // dropdown items
+          }
+        }
+      }}
+      sx={{
+        "& .MuiChip-label": {
+          fontSize: "0.75rem", /* chip text */
+        }
+      }}
     />
   );
 };
@@ -116,7 +136,7 @@ const FileTableRow = ({ file, useAppDispatch }: {file: SelectedFile; useAppDispa
   return (
     <>
       <TableRow sx={{ backgroundColor: file.valid === false ? "warning.light" : "" }}>
-        <TableCell sx={{ p: 0, pl: 1 }}>
+        <TableCell sx={{ py: 2, pl: 1, pr: 0 }}>
           {/* Actions/info: delete, retry, done, etc. */}
 
           {(file.status === "submitting" || file.status === "queued" || file.status === "finalising") && (
@@ -147,9 +167,10 @@ const FileTableRow = ({ file, useAppDispatch }: {file: SelectedFile; useAppDispa
         </TableCell>
         <TableCell
           sx={{
-            p: 1,
-            minWidth: 150,
-            maxWidth: 200,
+            px: 1,
+            py: 2,
+            width: 160,
+            maxWidth: 160,
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -157,10 +178,20 @@ const FileTableRow = ({ file, useAppDispatch }: {file: SelectedFile; useAppDispa
         >
           {file.name}
         </TableCell>
-        <TableCell sx={{ p: 1 }}>
-          {file.size ? `${(file.size / 1048576).toFixed(2)} MB` : "-"}
+        <TableCell sx={{ px: 1, py: 2, width: 50, minWidth: 50, maxWidth: 50 }}>
+          {file.size ? (() => {
+            const kb = file.size / 1024
+            const mb = kb / 1024
+            const gb = mb / 1024
+
+            return gb >= 1
+              ? `${Math.floor(gb)} GB`
+              : mb >= 1
+              ? `${Math.floor(mb)} MB`
+              : `${Math.floor(kb)} KB`
+          })() : "-"}
         </TableCell>
-        <TableCell sx={{ p: 0 }}>
+        <TableCell sx={{ px: 0, py: 2 }}>
           <Checkbox
             checked={file.private}
             onChange={(e) =>
@@ -172,37 +203,48 @@ const FileTableRow = ({ file, useAppDispatch }: {file: SelectedFile; useAppDispa
                 }),
               )
             }
+            size="small"
             disabled={disabled}
           />
         </TableCell>
-        <TableCell sx={{ p: 1, minWidth: 150 }}>
+        <TableCell sx={{ px: 1, py: 2, minWidth: 140, maxWidth: 140 }}>
           <FileActionOptions type="role" file={file} useAppDispatch={useAppDispatch} />
         </TableCell>
-        <TableCell sx={{ p: 1, minWidth: 150 }}>
+        <TableCell sx={{ px: 1, py: 2, minWidth: 150 }}>
           <FileActionOptions type="process" file={file} useAppDispatch={useAppDispatch} />
         </TableCell>
       </TableRow>
-      {file.process && file.process.length > 0 && file.process.map(process =>
-        <TableRow key={`${file.name}-process-row-${process.value}`}>
-          { process.value === "transcribe_audio" &&
-            <AudioProcessing file={file} useAppDispatch={useAppDispatch} />
-          }
+      {file.process && file.process.length > 0 && 
+        <TableRow>
+          <TableCell colSpan={6} sx={{ p: 0, backgroundColor: "#f9f9f9", boxShadow: "0 4px 6px -2px rgba(0, 0, 0, 0.08) inset" }}>
+            {file.process.map((process, i) =>
+              process.value === "transcribe_audio" ?
+              <AudioProcessing file={file} useAppDispatch={useAppDispatch} last={i === file.process!.length - 1} /> :
+              process.value === "create_thumbnail" ?
+              <ThumbnailProcessing file={file} useAppDispatch={useAppDispatch} last={i === file.process!.length - 1} /> :
+              null
+            )}
+          </TableCell>
         </TableRow>
-      )}
+      }
       {file.status && 
         <TableRow>
-          <UploadProgress file={file} key={`progress-${file.name}`} />
+          <UploadProgress file={file} key={`progress-${file.name}`} hasProcessingOptions={file.process && file.process.length > 0} />
         </TableRow>
       }
     </>
   );
 };
 
-const UploadProgress = ({ file }: { file: SelectedFile }) => {
+const UploadProgress = ({ file, hasProcessingOptions }: { file: SelectedFile, hasProcessingOptions?: boolean }) => {
   console.log("UploadProgress", file);
   return (
     <TableCell
       colSpan={6}
+      sx={{
+        backgroundColor: "#f9f9f9",
+        boxShadow: hasProcessingOptions ? "none" : "0 4px 6px -2px rgba(0, 0, 0, 0.08) inset",
+      }}
     >
       <Box sx={{ width: "100%" }}>
         {file.status &&
