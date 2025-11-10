@@ -19,24 +19,29 @@ jobs:
       VITE_CONFIG_NAME: ${{ vars.VITE_CONFIG_NAME }}
       VITE_ENV_NAME: ${{ vars.VITE_ENV_NAME }}
       VITE_PACKAGING_TARGET: ${{ vars.VITE_PACKAGING_TARGET }}
+      SERVER_HOST: ${{ secrets.SERVER_HOST }}
+      SERVER_USER: ${{ secrets.SERVER_USER }}
+      SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node and pnpm
+      # ------------- NEW: explicit pnpm setup ----------------
+      - name: Setup PNPM
         uses: pnpm/action-setup@v3
         with:
-          version: 9
+          version: 10.3.0   # match your local
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: |
-          pnpm add -g turbo
-          pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
+
+      - name: Build workspace dependencies
+        run: pnpm build
 
       - name: Write environment file
         run: |
@@ -46,19 +51,15 @@ jobs:
           echo "VITE_PACKAGING_TARGET=${VITE_PACKAGING_TARGET}" >> "$APP_DIR/.env.production"
           echo "Created env file at $APP_DIR/.env.production:"
           cat "$APP_DIR/.env.production"
-      
+
       - name: Build app
-        run: pnpm run build:${{ env.APP_NAME }}
+        run: pnpm build:${{ env.APP_NAME }}
 
       - name: Clean up environment file
         run: |
           APP_DIR="apps/${APP_NAME}"
-          if [ -f "$APP_DIR/.env.production" ]; then
-            rm "$APP_DIR/.env.production"
-            echo "Removed $APP_DIR/.env.production"
-          else
-            echo "No env file to remove"
-          fi
+          rm -f "$APP_DIR/.env.production"
+          echo "Removed $APP_DIR/.env.production"
 
       - name: Deploy app to server
         uses: appleboy/scp-action@v0.1.7
@@ -81,15 +82,10 @@ jobs:
             FOOTER_FILE="/etc/opt/dans.knaw.nl/dataverse-branding/custom-footer.html"
             JS_FILE=$(basename $(ls -t /var/www/html/custom/${APP_NAME}/assets/*.js | head -n 1))
             JS_PATH="/custom/${APP_NAME}/assets/${JS_FILE}"
-
-            # Remove old script tag referencing this app
             sudo sed -i "/custom\/${APP_NAME}\/assets\/.*\.js/d" "$FOOTER_FILE"
-
-            # Insert new script tag before </body> if present, else append
             if grep -q "</body>" "$FOOTER_FILE"; then
               sudo sed -i "/<\/body>/i <script src=\"${JS_PATH}\"></script>" "$FOOTER_FILE"
             else
               echo "<script src=\"${JS_PATH}\"></script>" | sudo tee -a "$FOOTER_FILE" > /dev/null
             fi
-
             echo "Updated footer to include ${JS_PATH}"
