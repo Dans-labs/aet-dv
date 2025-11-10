@@ -35,6 +35,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          pnpm add -g turbo
           pnpm install --frozen-lockfile
 
       - name: Write environment file
