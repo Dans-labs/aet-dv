@@ -10,8 +10,28 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ApiTokenProvider } from './apiTokenContext';
 import { ShadowRootContext } from './shadowRootContext';
 
-export function createApp({ app, appendToId, theme }: { app: ReactNode; appendToId: string; theme?: Partial<Theme> }) {
+export function createApp({ 
+  app, 
+  appendToId, 
+  theme,
+  requireChildId
+}: { 
+  app: ReactNode; 
+  appendToId: string; 
+  theme?: Partial<Theme>;
+  requireChildId?: string;
+}) {
   const targetElement = document.querySelector(`#${appendToId}`);
+
+  // If requireChildId is specified, check if that element exists within targetElement
+  if (requireChildId) {
+    const requiredChild = targetElement?.querySelector(`#${requireChildId}`);
+    if (!requiredChild) {
+      console.log(`Element #${requireChildId} not found in #${appendToId}, skipping app creation`);
+      return;
+    }
+  }
+
   const shadowHost = document.createElement('div');
 
   // Insert the shadow host after the target element
