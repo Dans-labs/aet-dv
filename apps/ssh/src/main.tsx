@@ -4,5 +4,5 @@ import { createApp } from '@dans-dv/wrapper'
 createApp({
   app: <App />,
   appendToId: 'actionButtonBlock',
-  requireChildId: 'editDataSet',
+  requireChildId: process.env.NODE_ENV !== 'development' ? 'editDataSet' : undefined,
 })

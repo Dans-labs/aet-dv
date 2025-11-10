@@ -3,6 +3,11 @@ import { createTheme } from "@mui/material/styles";
 export function baseTheme(shadowRootElement: HTMLElement) {
   return (
     createTheme({
+      zIndex: {
+        modal: 9999,
+        drawer: 9999,
+        tooltip: 99999,
+      },
       components: {
         MuiPopover: {
           defaultProps: {
@@ -13,11 +18,6 @@ export function baseTheme(shadowRootElement: HTMLElement) {
           defaultProps: {
             container: shadowRootElement,
           },
-          styleOverrides: {
-            root: {
-              zIndex: '10000 !important',
-            }
-          }
         },
         MuiModal: {
           defaultProps: {
@@ -28,11 +28,6 @@ export function baseTheme(shadowRootElement: HTMLElement) {
           defaultProps: {
             container: shadowRootElement,
           },
-          styleOverrides: {
-            root: {
-              zIndex: 9999,
-            }
-          }
         },
       },
     })
