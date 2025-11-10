@@ -76,12 +76,22 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             FOOTER_FILE="/etc/opt/dans.knaw.nl/dataverse-branding/custom-footer.html"
-            JS_FILE=$(basename $(ls -t /var/www/html/custom/${APP_NAME}/*.js | head -n 1))
-            JS_PATH="/custom/${APP_NAME}/${JS_FILE}"
-            sudo sed -i "/custom\/${APP_NAME}\/assets\/.*\.js/d" "$FOOTER_FILE"
-            if grep -q "</body>" "$FOOTER_FILE"; then
-              sudo sed -i "/<\/body>/i <script src=\"${JS_PATH}\"></script>" "$FOOTER_FILE"
-            else
-              echo "<script src=\"${JS_PATH}\"></script>" | sudo tee -a "$FOOTER_FILE" > /dev/null
-            fi
-            echo "Updated footer to include ${JS_PATH}"
+            TARGET_DIR="/var/www/html/custom/${APP_NAME}"
+      
+            # remove old JS references for this app
+            sed -i "/custom\/${APP_NAME}\/.*\.js/d" "$FOOTER_FILE"
+      
+            # loop over all JS files in TARGET_DIR
+            for JS_FILE in "$TARGET_DIR"/*.js; do
+              BASENAME=$(basename "$JS_FILE")
+              JS_PATH="/custom/${APP_NAME}/$BASENAME"
+      
+              if grep -q "</body>" "$FOOTER_FILE"; then
+                sed -i "/<\/body>/i <script src=\"$JS_PATH\"></script>" "$FOOTER_FILE"
+              else
+                echo "<script src=\"$JS_PATH\"></script>" >> "$FOOTER_FILE"
+              fi
+            done
+      
+            echo "Injected JS files into footer:"
+            ls -1 "$TARGET_DIR"/*.js
