@@ -42,11 +42,6 @@ jobs:
           cat "$APP_DIR/.env.production"
       - name: Build app
         run: pnpm build:${{ env.APP_NAME }}
-      - name: Clean up environment file
-        run: |
-          APP_DIR="apps/${APP_NAME}"
-          rm -f "$APP_DIR/.env.production"
-          echo "Removed $APP_DIR/.env.production"
       - name: Deploy app to server
         uses: appleboy/scp-action@v0.1.7
         with:
