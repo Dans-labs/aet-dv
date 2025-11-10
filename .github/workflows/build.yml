@@ -1,5 +1,4 @@
 name: Build and Deploy App
-
 on:
   workflow_dispatch:
     inputs:
@@ -7,12 +6,10 @@ on:
         description: "App name to build (e.g., ssh, eosc)"
         required: true
         default: "ssh"
-
 jobs:
   build-and-deploy:
     runs-on: self-hosted
     environment: demo
-
     env:
       NODE_ENV: production
       APP_NAME: ${{ github.event.inputs.app }}
@@ -22,11 +19,9 @@ jobs:
       SERVER_HOST: ${{ secrets.SERVER_HOST }}
       SERVER_USER: ${{ secrets.SERVER_USER }}
       SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Setup PNPM
         uses: pnpm/action-setup@v3
         with:
@@ -35,10 +30,8 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
       - name: Write environment file
         run: |
           APP_DIR="apps/${APP_NAME}"
@@ -47,16 +40,13 @@ jobs:
           echo "VITE_PACKAGING_TARGET=${VITE_PACKAGING_TARGET}" >> "$APP_DIR/.env.production"
           echo "Created env file at $APP_DIR/.env.production:"
           cat "$APP_DIR/.env.production"
-
       - name: Build app
         run: pnpm build:${{ env.APP_NAME }}
-
       - name: Clean up environment file
         run: |
           APP_DIR="apps/${APP_NAME}"
           rm -f "$APP_DIR/.env.production"
           echo "Removed $APP_DIR/.env.production"
-
       - name: Deploy app to server
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -67,31 +57,39 @@ jobs:
           target: "/var/www/html/custom/${{ env.APP_NAME }}/"
           strip_components: 4
           rm: true
-
       - name: Update footer HTML on server
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
+          envs: APP_NAME
           script: |
             FOOTER_FILE="/etc/opt/dans.knaw.nl/dataverse-branding/custom-footer.html"
             TARGET_DIR="/var/www/html/custom/${APP_NAME}"
       
-            # remove old JS references for this app
-            sed -i "/custom\/${APP_NAME}\/.*\.js/d" "$FOOTER_FILE"
+            # remove old JS references for this app between the comment markers
+            sed -i "/<!-- Advanced Editing Toolkit -->/,/<!-- END Advanced Editing Toolkit -->/{ /custom\/${APP_NAME}\/.*\.js/d; }" "$FOOTER_FILE"
       
-            # loop over all JS files in TARGET_DIR
+            # prepare script tags for new JS files
+            SCRIPT_TAGS=""
             for JS_FILE in "$TARGET_DIR"/*.js; do
               BASENAME=$(basename "$JS_FILE")
               JS_PATH="/custom/${APP_NAME}/$BASENAME"
-      
-              if grep -q "</body>" "$FOOTER_FILE"; then
-                sed -i "/<\/body>/i <script src=\"$JS_PATH\"></script>" "$FOOTER_FILE"
-              else
-                echo "<script src=\"$JS_PATH\"></script>" >> "$FOOTER_FILE"
-              fi
+              SCRIPT_TAGS="${SCRIPT_TAGS}  <script src=\"$JS_PATH\"></script>\n"
             done
+      
+            # insert scripts within the comment block, before </body> or at the end
+            if grep -q "<!-- END Advanced Editing Toolkit -->" "$FOOTER_FILE"; then
+              # markers exist, insert before END marker
+              sed -i "/<!-- END Advanced Editing Toolkit -->/i ${SCRIPT_TAGS}" "$FOOTER_FILE"
+            elif grep -q "</body>" "$FOOTER_FILE"; then
+              # no markers but </body> exists, create block before </body>
+              sed -i "/<\/body>/i <!-- Advanced Editing Toolkit -->\n${SCRIPT_TAGS}<!-- END Advanced Editing Toolkit -->" "$FOOTER_FILE"
+            else
+              # no markers and no </body>, append at end
+              echo -e "<!-- Advanced Editing Toolkit -->\n${SCRIPT_TAGS}<!-- END Advanced Editing Toolkit -->" >> "$FOOTER_FILE"
+            fi
       
             echo "Injected JS files into footer:"
             ls -1 "$TARGET_DIR"/*.js
