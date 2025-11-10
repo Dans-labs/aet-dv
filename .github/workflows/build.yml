@@ -65,7 +65,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "apps/${{ env.APP_NAME }}/dist/*"
           target: "/var/www/html/custom/${{ env.APP_NAME }}/"
-          strip_components: 1
+          strip_components: 0
           rm: true
 
       - name: Update footer HTML on server
