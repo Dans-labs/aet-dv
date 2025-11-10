@@ -1,0 +1,83 @@
+name: Build and Deploy App
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: "App name to build (e.g., ssh, eosc)"
+        required: true
+        default: "ssh"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: demo
+
+    env:
+      NODE_ENV: production
+      APP_NAME: ${{ github.event.inputs.app }}
+      VITE_CONFIG_NAME: ${{ vars.VITE_CONFIG_NAME }}
+      VITE_ENV_NAME: ${{ vars.VITE_ENV_NAME }}
+      VITE_PACKAGING_TARGET: ${{ vars.VITE_PACKAGING_TARGET }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node and pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Write environment file
+        run: |
+          APP_DIR="apps/${APP_NAME}"
+          echo "VITE_CONFIG_NAME=${VITE_CONFIG_NAME}" > "$APP_DIR/.env.production"
+          echo "VITE_ENV_NAME=${VITE_ENV_NAME}" >> "$APP_DIR/.env.production"
+          echo "VITE_PACKAGING_TARGET=${VITE_PACKAGING_TARGET}" >> "$APP_DIR/.env.production"
+          echo "Created env file at $APP_DIR/.env.production:"
+          cat "$APP_DIR/.env.production"
+      
+      - name: Build app
+        run: pnpm build:${{ env.APP_NAME }} --mode production
+
+      - name: Deploy app to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "apps/${{ env.APP_NAME }}/dist/*"
+          target: "/var/www/html/custom/${{ env.APP_NAME }}/"
+          strip_components: 1
+          rm: true
+
+      - name: Update footer HTML on server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            FOOTER_FILE="/etc/opt/dans.knaw.nl/dataverse-branding/custom-footer.html"
+            JS_FILE=$(basename $(ls -t /var/www/html/custom/${APP_NAME}/assets/*.js | head -n 1))
+            JS_PATH="/custom/${APP_NAME}/assets/${JS_FILE}"
+
+            # Remove old script tag referencing this app
+            sudo sed -i "/custom\/${APP_NAME}\/assets\/.*\.js/d" "$FOOTER_FILE"
+
+            # Insert new script tag before </body> if present, else append
+            if grep -q "</body>" "$FOOTER_FILE"; then
+              sudo sed -i "/<\/body>/i <script src=\"${JS_PATH}\"></script>" "$FOOTER_FILE"
+            else
+              echo "<script src=\"${JS_PATH}\"></script>" | sudo tee -a "$FOOTER_FILE" > /dev/null
+            fi
+
+            echo "Updated footer to include ${JS_PATH}"
