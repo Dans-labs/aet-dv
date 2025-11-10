@@ -71,13 +71,17 @@ jobs:
             # remove old JS references for this app between the comment markers
             sed -i "/<!-- Advanced Editing Toolkit -->/,/<!-- END Advanced Editing Toolkit -->/{ /custom\/${APP_NAME}\/.*\.js/d; }" "$FOOTER_FILE"
       
-            # prepare script tags for new JS files
-            SCRIPT_TAGS=""
-            for JS_FILE in "$TARGET_DIR"/*.js; do
-              BASENAME=$(basename "$JS_FILE")
-              JS_PATH="/custom/${APP_NAME}/$BASENAME"
-              SCRIPT_TAGS="${SCRIPT_TAGS}  <script src=\"$JS_PATH\"></script>\n"
-            done
+            # find the index-*.js file
+            INDEX_FILE=$(ls "$TARGET_DIR"/index-*.js 2>/dev/null | head -n 1)
+            
+            if [ -z "$INDEX_FILE" ]; then
+              echo "Error: No index-*.js file found in $TARGET_DIR"
+              exit 1
+            fi
+            
+            BASENAME=$(basename "$INDEX_FILE")
+            JS_PATH="/custom/${APP_NAME}/$BASENAME"
+            SCRIPT_TAGS="  <script src=\"$JS_PATH\"></script>\n"
       
             # insert scripts within the comment block, before </body> or at the end
             if grep -q "<!-- END Advanced Editing Toolkit -->" "$FOOTER_FILE"; then
