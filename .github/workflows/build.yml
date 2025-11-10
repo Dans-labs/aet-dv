@@ -34,7 +34,9 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          npm i -g turbo
+          pnpm install --frozen-lockfile
 
       - name: Write environment file
         run: |
