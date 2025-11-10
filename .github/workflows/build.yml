@@ -10,7 +10,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     environment: demo
 
     env:
@@ -27,7 +27,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ------------- NEW: explicit pnpm setup ----------------
       - name: Setup PNPM
         uses: pnpm/action-setup@v3
         with:
@@ -63,7 +62,7 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
+          # self hosted, so not needed # key: ${{ secrets.SERVER_SSH_KEY }}
           source: "apps/${{ env.APP_NAME }}/dist/*"
           target: "/var/www/html/custom/${{ env.APP_NAME }}/"
           strip_components: 1
