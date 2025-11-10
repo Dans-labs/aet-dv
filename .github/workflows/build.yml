@@ -81,7 +81,7 @@ jobs:
             
             BASENAME=$(basename "$INDEX_FILE")
             JS_PATH="/custom/${APP_NAME}/$BASENAME"
-            SCRIPT_TAGS="  <script src=\"$JS_PATH\"></script>\n"
+            SCRIPT_TAGS="  <script type=\"module\" src=\"$JS_PATH\"></script>\n"
       
             # insert scripts within the comment block, before </body> or at the end
             if grep -q "<!-- END Advanced Editing Toolkit -->" "$FOOTER_FILE"; then
