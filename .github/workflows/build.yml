@@ -63,9 +63,9 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "apps/${{ env.APP_NAME }}/dist/*"
+          source: "apps/${{ env.APP_NAME }}/dist/assets/*"
           target: "/var/www/html/custom/${{ env.APP_NAME }}/"
-          strip_components: 2
+          strip_components: 4
           rm: true
 
       - name: Update footer HTML on server
@@ -76,8 +76,8 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             FOOTER_FILE="/etc/opt/dans.knaw.nl/dataverse-branding/custom-footer.html"
-            JS_FILE=$(basename $(ls -t /var/www/html/custom/${APP_NAME}/assets/*.js | head -n 1))
-            JS_PATH="/custom/${APP_NAME}/assets/${JS_FILE}"
+            JS_FILE=$(basename $(ls -t /var/www/html/custom/${APP_NAME}/*.js | head -n 1))
+            JS_PATH="/custom/${APP_NAME}/${JS_FILE}"
             sudo sed -i "/custom\/${APP_NAME}\/assets\/.*\.js/d" "$FOOTER_FILE"
             if grep -q "</body>" "$FOOTER_FILE"; then
               sudo sed -i "/<\/body>/i <script src=\"${JS_PATH}\"></script>" "$FOOTER_FILE"
