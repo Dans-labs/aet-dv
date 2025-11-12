@@ -9,3 +9,6 @@ This plugin is designed to add advanced editing functions for metadata inside Da
 * Install dependencies, in the root dir run `pnpm i`
 * Run the app dev server, e.g. `pnpm dev:eosc`
 * Visit the appropriate Dataverse site and select a dataset you can edit. You should see an Advanced Edit button rendered below the default editing action buttons.
+
+## Build and deployment
+This app features a Github Action which builds and deploys a toolkit application. It can be adapted for different environments and be used for different toolkit configurations/apps.
