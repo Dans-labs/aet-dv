@@ -23,10 +23,12 @@ export const filesSlice = createSlice({
       );
     },
     queueFiles: (state) => {
-      // set all files to queued
+      // set all files to queued if not already successfully uploaded
       state.forEach((file: SelectedFile) => {
-        file.status = "queued";
-        file.progress = 0;
+        if (file.status !== "success") {
+          file.status = "queued";
+          file.progress = 0;
+        }
       });
     },
     setFileMeta: <K extends keyof SelectedFile>(state: SelectedFile[], action: PayloadAction<ReduxFileActions<K>>) => {

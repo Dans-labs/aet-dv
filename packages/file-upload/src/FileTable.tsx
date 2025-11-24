@@ -219,9 +219,9 @@ const FileTableRow = ({ file, useAppDispatch }: {file: SelectedFile; useAppDispa
           <TableCell colSpan={6} sx={{ p: 0, backgroundColor: "#f9f9f9", boxShadow: "0 4px 6px -2px rgba(0, 0, 0, 0.08) inset" }}>
             {file.process.map((process, i) =>
               process.value === "transcribe_audio" ?
-              <AudioProcessing file={file} useAppDispatch={useAppDispatch} last={i === file.process!.length - 1} /> :
+              <AudioProcessing key={`audio-${i}`} file={file} useAppDispatch={useAppDispatch} last={i === file.process!.length - 1} /> :
               process.value === "create_thumbnail" ?
-              <ThumbnailProcessing file={file} useAppDispatch={useAppDispatch} last={i === file.process!.length - 1} /> :
+              <ThumbnailProcessing key={`thumbnail-${i}`} file={file} useAppDispatch={useAppDispatch} last={i === file.process!.length - 1} /> :
               null
             )}
           </TableCell>
@@ -237,7 +237,6 @@ const FileTableRow = ({ file, useAppDispatch }: {file: SelectedFile; useAppDispa
 };
 
 const UploadProgress = ({ file, hasProcessingOptions }: { file: SelectedFile, hasProcessingOptions?: boolean }) => {
-  console.log("UploadProgress", file);
   return (
     <TableCell
       colSpan={6}
@@ -252,7 +251,10 @@ const UploadProgress = ({ file, hasProcessingOptions }: { file: SelectedFile, ha
             <Typography variant="body2" color="textSecondary" sx={{ whiteSpace: 'nowrap', fontSize: '0.75rem', textAlign: 'right', width: 200 }}>
               {file.status === 'submitting' && `${file?.progress || 0}% uploaded`}
               {file.status === 'error' && `Error uploading, please retry`}
-              {file.status === 'success' && `Upload complete`}
+              {(file.status === 'success' 
+              || file.status === 'processing'
+              || file.status === 'processed'
+              ) && `Upload complete`}
               {file.status === 'queued' && `Waiting to upload`}
             </Typography>
             <LinearProgress
@@ -278,8 +280,8 @@ const UploadProgress = ({ file, hasProcessingOptions }: { file: SelectedFile, ha
             </Typography>
             <LinearProgress
               sx={{ width: "100%", borderRadius: 1 }}
-              variant="determinate"
-              value={0}
+              variant={file.status === "processing" ? "indeterminate" : "determinate"}
+              value={file.status === 'processed' ? 100 : 0}
               color="secondary"
             />              
           </Stack>

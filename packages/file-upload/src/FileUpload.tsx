@@ -28,6 +28,8 @@ export type AudioProcessingOptions = {
   sourceLanguage?: string;
   diarisation?: boolean;
   speakers?: number;
+  transcriptUrl?: string;
+  fileUrl?: string;
 };
 export type ThumbnailProcessingOptions = {
   number?: number;
@@ -113,10 +115,7 @@ const FileUpload = ({ useAppDispatch, useAppSelector }: ReduxProps) => {
 
     // No files with these file names
     if (
-      file.name.indexOf("__generated__form-metadata") !== -1 ||
-      // oh smart specific. todo: move this all to form config.
-      file.name.toLowerCase() === "oral history metadata private.txt" ||
-      file.name.toLowerCase() === "oral history metadata public.txt"
+      file.name.indexOf("__generated__form-metadata") !== -1
     ) {
       return {
         code: "file-not-allowed",

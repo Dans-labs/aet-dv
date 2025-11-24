@@ -17,6 +17,114 @@ const manualError = async (
   );
 };
 
+// temporary function to simulate upload response
+export interface UploadResult {
+  file: "success";
+  transcriptUrl?: string;
+  fileUrl?: string;
+}
+
+export const simulateUploadFile = async (
+  file: SelectedFile,
+  dispatch: any
+): Promise<UploadResult> => {
+  console.log('Simulating upload for file:', file);
+  
+  // Set file status to submitting, to add it to actual upload queue
+  dispatch(
+    setFileMeta({
+      name: file.name,
+      type: "status",
+      value: "submitting",
+    })
+  );
+
+  // Simulate upload progress from 0 to 100
+  for (let progress = 0; progress <= 100; progress += 10) {
+    console.log('Simulating upload progress:', progress);
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    dispatch(
+      setFileMeta({
+        name: file.name,
+        type: "progress",
+        value: progress,
+      })
+    );
+  }
+
+  // Mark file as submitted
+  dispatch(
+    setFileMeta({
+      name: file.name,
+      type: "submittedFile",
+      value: true,
+    })
+  );
+
+  // Set file status to success
+  dispatch(
+    setFileMeta({
+      name: file.name,
+      type: "status",
+      value: "success",
+    })
+  );
+
+  // Generate fake file URL if not provided
+  const fileUrl = '/temp_audio_file.m4a';
+
+  // Check if file needs transcription processing
+  if (file.process?.find((p) => p.value === "transcribe_audio")) {
+    console.log('Simulating transcript processing for file:', file);
+    
+    // Set status to processing
+    dispatch(
+      setFileMeta({
+        name: file.name,
+        type: "status",
+        value: "processing",
+      })
+    );
+
+    // Simulate processing time (1-2 seconds)
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    // Set processing complete
+    dispatch(
+      setFileMeta({
+        name: file.name,
+        type: "status",
+        value: "processed",
+      })
+    );
+
+    dispatch(
+      setFileMeta({
+        name: file.name,
+        type: "audioProcessing",
+        value: {
+          ...file.audioProcessing,
+          transcriptUrl: `/temp_audio_file_transcript.json`,
+          fileUrl,
+        },
+      })
+    );
+
+    // Return success with transcript and file URLs
+    return {
+      file: "success",
+      transcriptUrl: `/temp_audio_file_transcript.json`,
+      fileUrl,
+    };
+  }
+
+  // Return success without transcript
+  return {
+    file: "success",
+    fileUrl,
+  };
+};
+
 // Create a new tus upload
 export const uploadFile = async (file: SelectedFile, dispatch: any, apiToken: string, doi: string) => {
   // set file status to submitting, to add it to actual upload queue, while we create the blob

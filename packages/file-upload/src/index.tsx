@@ -4,7 +4,7 @@ import FileUpload, { type SelectedFile } from "./FileUpload";
 import type { TypedUseSelectorHook } from "react-redux";
 import { getFiles, queueFiles } from "./slice";
 import Button from "@mui/material/Button";
-import { uploadFile } from "./tus";
+import { /*uploadFile,*/ simulateUploadFile } from "./tus";
 import { useApiToken } from "@dans-dv/wrapper";
 import { TabHeader, BoxWrap } from "@dans-dv/layout";
 import { useSubmitDataMutation } from "@dans-dv/submit";
@@ -67,7 +67,7 @@ function FileUploader({useAppSelector, useAppDispatch}: ReduxProps) {
   // Check files that have status queued, and start uploading when a spot becomes available in the queue.
   const selectedFiles = useAppSelector(getFiles);
   const dispatch = useAppDispatch();
-  const { apiToken, doi } = useApiToken();
+  // const { apiToken, doi } = useApiToken();
 
   useEffect(() => {
     const currentlyUploading = selectedFiles.filter(
@@ -78,7 +78,8 @@ function FileUploader({useAppSelector, useAppDispatch}: ReduxProps) {
       selectedFiles.find((file) => {
         console.log(file)
         // only call the upload function if file is queued
-        return file?.status === "queued" && apiToken && doi && uploadFile(file, dispatch, apiToken, doi);
+        // return file?.status === "queued" && apiToken && doi && uploadFile(file, dispatch, apiToken, doi);
+        return file?.status === "queued" && simulateUploadFile(file, dispatch);
       });
     }
   }, [selectedFiles]);

@@ -7,10 +7,12 @@
   "keywords": [],
   "author": "",
   "dependencies": {
+    "@bbc/react-transcript-editor": "^1.4.4",
+    "@dans-dv/guidance": "workspace:*",
     "@dans-dv/layout": "workspace:*",
     "@dans-dv/submit": "workspace:*",
     "@dans-dv/wrapper": "workspace:*",
-    "@dans-dv/guidance": "workspace:*",
+    "@kmoz000/react-transcript-editor": "^1.4.7",
     "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.1.0",
     "@reduxjs/toolkit": "^2.8.2",
