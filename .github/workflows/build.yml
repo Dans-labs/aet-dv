@@ -16,6 +16,7 @@ jobs:
       VITE_CONFIG_NAME: ${{ vars.VITE_CONFIG_NAME }}
       VITE_ENV_NAME: ${{ vars.VITE_ENV_NAME }}
       VITE_PACKAGING_TARGET: ${{ vars.VITE_PACKAGING_TARGET }}
+      VITE_TEMP_DIR: ${{ vars.VITE_TEMP_DIR }}
       SERVER_HOST: ${{ secrets.SERVER_HOST }}
       SERVER_USER: ${{ secrets.SERVER_USER }}
       SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
@@ -38,6 +39,7 @@ jobs:
           echo "VITE_CONFIG_NAME=${VITE_CONFIG_NAME}" > "$APP_DIR/.env.production"
           echo "VITE_ENV_NAME=${VITE_ENV_NAME}" >> "$APP_DIR/.env.production"
           echo "VITE_PACKAGING_TARGET=${VITE_PACKAGING_TARGET}" >> "$APP_DIR/.env.production"
+          echo "VITE_TEMP_DIR=${VITE_TEMP_DIR}" >> "$APP_DIR/.env.production"
           echo "Created env file at $APP_DIR/.env.production:"
           cat "$APP_DIR/.env.production"
       - name: Build app
