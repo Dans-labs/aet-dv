@@ -16,7 +16,7 @@ jobs:
       VITE_CONFIG_NAME: ${{ vars.VITE_CONFIG_NAME }}
       VITE_ENV_NAME: ${{ vars.VITE_ENV_NAME }}
       VITE_PACKAGING_TARGET: ${{ vars.VITE_PACKAGING_TARGET }}
-      VITE_TEMP_DIR: ${{ vars.VITE_TEMP_DIR }}
+      VITE_TEMP_DIR: /custom/${{ github.event.inputs.app }}/public
       SERVER_HOST: ${{ secrets.SERVER_HOST }}
       SERVER_USER: ${{ secrets.SERVER_USER }}
       SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
