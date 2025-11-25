@@ -104,7 +104,7 @@ export const simulateUploadFile = async (
         type: "audioProcessing",
         value: {
           ...file.audioProcessing,
-          transcriptUrl: `/temp_audio_file_transcript.json`,
+          transcriptUrl: `${import.meta.env.VITE_TEMP_DIR}/temp_audio_file_transcript.json`,
           fileUrl,
         },
       })
@@ -113,7 +113,7 @@ export const simulateUploadFile = async (
     // Return success with transcript and file URLs
     return {
       file: "success",
-      transcriptUrl: `/temp_audio_file_transcript.json`,
+      transcriptUrl: `${import.meta.env.VITE_TEMP_DIR}/temp_audio_file_transcript.json`,
       fileUrl,
     };
   }
