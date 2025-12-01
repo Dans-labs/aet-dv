@@ -63,7 +63,6 @@ jobs:
           source: "apps/${{ env.APP_NAME }}/public/*"
           target: "/var/www/html/custom/${{ env.APP_NAME }}"
           strip_components: 2
-          rm: true
       - name: Update footer HTML on server
         uses: appleboy/ssh-action@v1.2.0
         with:
