@@ -19,7 +19,6 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CloseIcon from '@mui/icons-material/Close';
 import { motion } from 'motion/react';
 import { useDebounce } from "use-debounce";
-import { env } from 'process';
 
 type Segment = {
   speaker: Speaker | string;
