@@ -71,7 +71,7 @@ export const simulateUploadFile = async (
   );
 
   // Generate fake file URL if not provided
-  const fileUrl = '/temp_audio_file.m4a';
+  const fileUrl = `${import.meta.env.VITE_TEMP_DIR}/temp_audio_file.m4a`;
 
   // Check if file needs transcription processing
   if (file.process?.find((p) => p.value === "transcribe_audio")) {
