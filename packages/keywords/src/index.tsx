@@ -1,23 +1,26 @@
-import { getFields, setField, type KeywordsFormState, type KeywordSource, type Keyword } from "./slice";
+import { getFields, setField, setAllFields, type KeywordsFormState, type KeywordSource, type Keyword } from "./slice";
 import type { TypedUseSelectorHook } from "react-redux";
 import { useDebounce } from "use-debounce";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFetchDatastationsTermQuery } from "./api/datastationsVocabs";
 import { useFetchGeonamesFreeTextQuery } from "./api/geonames";
 import { useFetchWikidataQuery } from "./api/wikidata";
+import { useFetchDataverseKeywordsQuery } from "./api/dataverse";
 import { AutocompleteAPIField } from "@dans-dv/inputs";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { TabHeader, SubHeader, BoxWrap } from "@dans-dv/layout";
-import { Submit, useSubmitDataMutation } from "@dans-dv/submit";
+import { Submit, useSubmitDirectDataMutation } from "@dans-dv/submit";
 import { useApiToken } from "@dans-dv/wrapper";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { vocabMap, keywordFormatter } from "./helpers";
 
 type AppDispatch = (action: any) => any;
 export type RootState = {keywords: KeywordsFormState};
 
-type DatastationTypes = "elsst" | "narcis" | "dansCollections" | "gettyAat";
+type DatastationTypes = "elsst" | "narcis" | "dansCollectionsSsh" | "gettyAat";
 
-const datastationConfigs: DatastationTypes[] = ["elsst", "narcis", "dansCollections", "gettyAat"];
+const datastationConfigs: DatastationTypes[] = ["elsst", "narcis", "dansCollectionsSsh", "gettyAat"];
 
 export function KeywordFields({ config, useAppDispatch, useAppSelector }: {
   useAppDispatch: () => AppDispatch;
@@ -27,14 +30,15 @@ export function KeywordFields({ config, useAppDispatch, useAppSelector }: {
     geonames?: boolean;
     elsst?: boolean;
     narcis?: boolean;
-    dansCollections?: boolean;
+    dansCollectionsSsh?: boolean;
     gettyAat?: boolean;
   };
 }) {
   const dispatch = useAppDispatch();
   const keywords = useAppSelector(getFields());
-  const [ submitData, { isLoading: submitLoading, isSuccess: submitSuccess, isError: submitError, error: submitErrorMessage } ] = useSubmitDataMutation();
+  const [ submitDirectData, { isLoading: submitLoading, isSuccess: submitSuccess, isError: submitError, error: submitErrorMessage } ] = useSubmitDirectDataMutation();
   const { apiToken, doi } = useApiToken();
+  const { data: dataverseKeywords, isLoading: isLoadingDataverseKeywords } = useFetchDataverseKeywordsQuery({ doi: doi, apiToken: apiToken });
 
   const onSave = (field: KeywordSource, data: Keyword[] ) => {
     dispatch(setField({
@@ -43,34 +47,58 @@ export function KeywordFields({ config, useAppDispatch, useAppSelector }: {
     }));
   };
 
+  useEffect(() => {
+    if (dataverseKeywords && !isLoadingDataverseKeywords) {
+      dispatch(setAllFields({ data: dataverseKeywords }));
+    }
+  }, [dataverseKeywords, isLoadingDataverseKeywords]);
+
   return (
     <BoxWrap>
       <TabHeader
         title="Keywords"
         subtitle="Add keywords from different sources to your dataset. Keywords can be used to find datasets in the Dataverse search engine."
       />
-      {config.wikidata && (
-        <WikidataField 
-          onSave={(data) => onSave("wikidata", data)} 
-          value={keywords.wikidata} 
-        />
-      )}
-      {config.geonames && (
-        <GeonamesField 
-          onSave={(data) => onSave("geonames", data)} 
-          value={keywords.geonames} 
-        />
-      )}
-      {datastationConfigs.map((item) =>
-        config[item] ? (
-          <DatastationsField
-            key={item}
-            onSave={(data) => onSave(item, data)}
-            value={keywords[item]}
-            type={item}
+      <Box sx={{position: 'relative'}}>
+        {isLoadingDataverseKeywords ? (
+          <Box sx={{ 
+            position: 'absolute', 
+            top: 0, 
+            right: 0,
+            bottom: 0,
+            left: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 10,
+           }}>
+            <Typography>Loading keywords from Dataverse...</Typography>
+          </Box>
+        ) : null}
+        {config.wikidata && (
+          <WikidataField 
+            onSave={(data) => onSave("wikidata", data)} 
+            value={keywords.wikidata} 
           />
-        ) : null
-      )}
+        )}
+        {config.geonames && (
+          <GeonamesField 
+            onSave={(data) => onSave("geonames", data)} 
+            value={keywords.geonames} 
+          />
+        )}
+        {datastationConfigs.map((item) =>
+          config[item] ? (
+            <DatastationsField
+              key={item}
+              onSave={(data) => onSave(item, data)}
+              value={keywords[item]}
+              type={item}
+            />
+          ) : null
+        )}
+      </Box>
 
       <Submit 
         disabled={!Object.values(keywords).some(arr => arr.length > 0)} 
@@ -78,7 +106,7 @@ export function KeywordFields({ config, useAppDispatch, useAppSelector }: {
         isError={submitError} 
         isSuccess={submitSuccess} 
         error={submitErrorMessage as FetchBaseQueryError}
-        onClick={() => submitData({ data: { keyword_management: keywords }, id: doi, apiToken: apiToken })}
+        onClick={() => submitDirectData({ data: keywordFormatter(keywords), id: doi, apiToken: apiToken })}
       />
 
     </BoxWrap>
@@ -100,8 +128,8 @@ function WikidataField({ onSave, value }: {
   return (
     <Box mb={2}>
       <SubHeader 
-        title="Wikidata"
-        subtitle="Wikidata acts as a central storage for the structured data of Wikimedia projects like Wikipedia, Wikivoyage, Wiktionary."
+        title={vocabMap.wikidata.name}
+        subtitle={vocabMap.wikidata.description}
       />
       <AutocompleteAPIField
         inputValue={inputValue}
@@ -134,8 +162,8 @@ function GeonamesField({ onSave, value }: {
   return (
     <Box mb={2}>
       <SubHeader 
-        title="Geonames"
-        subtitle=""
+        title={vocabMap.geonames.name}
+        subtitle={vocabMap.geonames.description}
       />
       <AutocompleteAPIField
         inputValue={inputValue}
@@ -169,24 +197,11 @@ function DatastationsField({ type, onSave, value }: {
       { skip: debouncedInputValue === "" },
     );
 
-  const label = 
-    type === "elsst" ? "ELSST" :
-    type === "narcis" ? "NARCIS" :
-    type === "dansCollections" ? "DANS Collections" :
-    type === "gettyAat" ? "Getty AAT" :
-    "";
-
   return (
     <Box mb={2}>
       <SubHeader 
-        title={label}
-        subtitle={
-          type === "elsst" ? "ELSST is the European Language Social Science Thesaurus, a controlled vocabulary for social science research." :
-          type === "narcis" ? "NARCIS is the Dutch national portal for research information, providing access to datasets and publications." :
-          type === "dansCollections" ? "DANS Collections provides access to datasets and publications from DANS, the Dutch national centre of expertise in digital archiving." :
-          type === "gettyAat" ? "Getty AAT (Art & Architecture Thesaurus) is a structured vocabulary for art and architecture." :
-          ""
-        }
+        title={vocabMap[type].name}
+        subtitle={vocabMap[type].description}
       />
       <AutocompleteAPIField
         inputValue={inputValue}
@@ -196,7 +211,7 @@ function DatastationsField({ type, onSave, value }: {
         isLoading={isLoading}
         isFetching={isFetching}
         multiSelect
-        label={label}
+        label={vocabMap[type].name}
         onSave={onSave}
         value={value}
       />

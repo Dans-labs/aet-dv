@@ -1,5 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+export const vocabInfo = {
+  name: "Wikidata",
+  description: "Wikidata is a free and open knowledge base that can be read and edited by both humans and machines. It acts as a central storage for the structured data of its Wikimedia sister projects including Wikipedia, Wikivoyage, Wikisource, and others.",
+  url: "https://www.wikidata.org/",
+  apiUrl: "https://www.wikidata.org/w/api.php",
+}
+
 export interface WikidataResponse {
   search: {
     id: string;
@@ -13,13 +20,13 @@ export interface WikidataResponse {
 export const wikidataApi = createApi({
   reducerPath: "wikidata",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://www.wikidata.org/w",
+    baseUrl: vocabInfo.apiUrl,
   }),
   endpoints: (build) => ({
     fetchWikidata: build.query({
       query: (content) => {
         return {
-          url: `api.php?action=wbsearchentities&format=json&type=item&language=en&origin=*&search=${content}`,
+          url: `?action=wbsearchentities&format=json&type=item&language=en&origin=*&search=${content}`,
         };
       },
       transformResponse: (response: WikidataResponse, _meta, arg) => {

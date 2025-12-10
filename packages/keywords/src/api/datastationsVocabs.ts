@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-type Datastations = "elsst" | "narcis" | "dansCollections" | "gettyAat";
+type Datastations = "elsst" | "narcis" | "dansCollectionsSsh" | "gettyAat";
 interface DatastationsItem {
   uri: string;
   prefLabel: string;
@@ -14,11 +14,34 @@ interface DatastationsResponse {
 
 // map short vocab terms to their API vocab counterparts
 const vocabMap: Record<Datastations, string> = {
-  elsst: "ELSST_R3",
+  elsst: "ELSST_R4",
   narcis: "NARCIS",
-  dansCollections: "DansCollections",
+  dansCollectionsSsh: "DansCollections",
   gettyAat: "AATC",
 };
+
+export const vocabInfo = {
+  elsst: {
+    name: "ELSST",
+    description: "The European Language for Subject-Specific Thesauri (ELSST) is a multilingual thesaurus for subject indexing and retrieval of scientific information in Europe.",
+    url: "https://vocabs.datastations.nl/ELSST_R3/en",
+  },
+  narcis: {
+    name: "NARCIS",
+    description: "NARCIS is the Dutch national portal for research information, providing access to datasets and publications.",
+    url: "https://vocabs.datastations.nl/NARCIS/en",
+  },
+  dansCollectionsSsh: {
+    name: "DANS Collections SSH",
+    description: "DANS Collections SSH is a controlled vocabulary maintained by DANS for indexing and retrieving datasets within the DANS repository.",
+    url: "https://vocabularies.dans.knaw.nl/collections/ssh",
+  },
+  gettyAat: {
+    name: "Getty AAT",
+    description: "The Getty Art & Architecture Thesaurus (AAT) is a structured vocabulary for describing art, architecture, and material culture.",
+    url: "https://vocabs.datastations.nl/AATC/en",
+  },
+}
 
 export const datastationsApi = createApi({
   reducerPath: "datastations",
@@ -44,7 +67,7 @@ export const datastationsApi = createApi({
                 // dansCollections should only return from the ssh collection.
                 // No API var to use for this it seems, so lets do it the dirty way
                 (
-                  arg.vocabulary === "dansCollections" &&
+                  arg.vocabulary === "dansCollectionsSsh" &&
                   !item.localname.startsWith("ssh/")
                 ) ?
                   false

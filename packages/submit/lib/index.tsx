@@ -1,2 +1,2 @@
 export { Submit } from '../src';
-export { submitApi, useSubmitDataMutation } from '../src/api';
+export { submitApi, useSubmitDataMutation, submitDirectApi, useSubmitDirectDataMutation } from '../src/api';

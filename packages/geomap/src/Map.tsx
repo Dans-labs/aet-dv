@@ -176,12 +176,12 @@ const DrawMap = ({ setValue, value, draw }: {
         <GeonamesApiField
           value={geonamesValue}
           setValue={setGeonamesValue}
-          label="Select a location"
+          label="Add a location from Geonames"
         />
         <FindCoordinateSystemField
           value={coordinateSystem}
           setValue={setCoordinateSystem}
-          label="Select a coordinate system"
+          label="Select an alternative coordinate system"
         />
       </Stack>
         <Box pt={1} sx={{ width: "60rem", maxWidth: "90vw" }}>

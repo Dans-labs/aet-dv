@@ -20,7 +20,7 @@ export function Submit({ disabled, isLoading, isError, error, isSuccess, onClick
       <Button 
         variant="contained" 
         size="large"
-        disabled={disabled || isLoading || isSuccess} 
+        disabled={disabled || isLoading} 
         type="submit"
         onClick={() => typeof onClick === "function" && onClick()}
       >

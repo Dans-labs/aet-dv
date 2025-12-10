@@ -44,7 +44,7 @@ export default function GeoData({ config, useAppDispatch, useAppSelector }: {
     <BoxWrap width={60}>
       <TabHeader
         title="Geospatial data"
-        subtitle="Some explanation on how to use this tool."
+        subtitle="Start by adding a Geonames location directly, or by drawing points or rectangles on the map and link them to a Geonames location. If your data is not in WSG-84, you can select your coordinate reference system below."
       />
       { config.map && <DrawMap setValue={setFeaturesValue} value={value} draw={config.map.draw} /> }
 

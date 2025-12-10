@@ -1,8 +1,8 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import { swhReducer, codemetaApi } from "@dans-dv/swh-registration";
-import { submitApi } from "@dans-dv/submit";
+import { submitApi, submitDirectApi } from "@dans-dv/submit";
 import { dansFormatsApi, fileReducer } from "@dans-dv/file-upload";
-import { keywordsReducer, datastationsApi, wikidataApi } from "@dans-dv/keywords";
+import { keywordsReducer, datastationsApi, wikidataApi, dataverseApi } from "@dans-dv/keywords";
 import { geomapReducer, geonamesApi, wmsApi, maptilerApi } from "@dans-dv/geomap";
 
 export const store = configureStore({
@@ -13,8 +13,10 @@ export const store = configureStore({
     geomap: geomapReducer,
     [codemetaApi.reducerPath]: codemetaApi.reducer,
     [submitApi.reducerPath]: submitApi.reducer,
+    [submitDirectApi.reducerPath]: submitDirectApi.reducer,
     [dansFormatsApi.reducerPath]: dansFormatsApi.reducer,
     [datastationsApi.reducerPath]: datastationsApi.reducer,
+    [dataverseApi.reducerPath]: dataverseApi.reducer,
     [wikidataApi.reducerPath]: wikidataApi.reducer,
     [geonamesApi.reducerPath]: geonamesApi.reducer,
     [wmsApi.reducerPath]: wmsApi.reducer,
@@ -24,10 +26,12 @@ export const store = configureStore({
     getDefaultMiddleware()
       .concat(codemetaApi.middleware)
       .concat(submitApi.middleware)
+      .concat(submitDirectApi.middleware)
       .concat(dansFormatsApi.middleware)
       .concat(datastationsApi.middleware)
       .concat(wikidataApi.middleware)
       .concat(geonamesApi.middleware)
+      .concat(dataverseApi.middleware)
       .concat(wmsApi.middleware)
       .concat(maptilerApi.middleware)
 });

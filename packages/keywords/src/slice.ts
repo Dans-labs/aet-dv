@@ -12,7 +12,7 @@ export type KeywordsFormState = {
   geonames: Keyword[];
   elsst: Keyword[];
   narcis: Keyword[];
-  dansCollections: Keyword[];
+  dansCollectionsSsh: Keyword[];
 };
 
 export type KeywordSource = keyof KeywordsFormState;
@@ -23,7 +23,7 @@ const initialState: KeywordsFormState = {
   geonames: [],
   elsst: [],
   narcis: [],
-  dansCollections: [],
+  dansCollectionsSsh: [],
 };
 
 export const keywordsSlice = createSlice({
@@ -37,10 +37,16 @@ export const keywordsSlice = createSlice({
       const { field, value } = action.payload;
       state[field] = value;
     },
+    setAllFields(_state, action: PayloadAction<{ data: KeywordsFormState }>) {
+      return action.payload.data;
+    },
+    resetFields() {
+      return initialState;
+    }
   },
 });
 
-export const { setField } = keywordsSlice.actions;
+export const { setField, setAllFields, resetFields } = keywordsSlice.actions;
 
 export const getField = <K extends keyof KeywordsFormState>(field: K) =>
   (state: RootState) => state.keywords[field];

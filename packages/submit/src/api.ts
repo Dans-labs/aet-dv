@@ -75,3 +75,37 @@ export const submitApi = createApi({
 });
 
 export const { useSubmitDataMutation } = submitApi;
+
+export const submitDirectApi = createApi({
+  reducerPath: "submitDirectApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: `${import.meta.env.VITE_DV_URL}`,
+  }),
+  endpoints: (build) => ({
+    submitDirectData: build.mutation({
+      query: ({ data, apiToken, doi }) => {
+        // format headers
+        const headers = {
+          "X-Dataverse-key": apiToken,
+        };
+
+        // log for dev
+        if(!import.meta.env.PROD) {
+          console.log("Submit req headers:");
+          console.log(headers);
+          console.log("Submit metadata:");
+          console.log(data);
+        }
+
+        return {
+          url: `/api/datasets/:persistentId/editMetadata?persistentId=${doi}`,
+          method: "PUT",
+          headers: headers,
+          body: data,
+        };
+      },
+    }),
+  }),
+});
+
+export const { useSubmitDirectDataMutation } = submitDirectApi;

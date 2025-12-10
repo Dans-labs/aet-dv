@@ -15,9 +15,16 @@ type GeonamesResponse = {
   ocean?: GeonamesItem;
 }
 
+export const vocabInfo = {
+  name: "Geonames",
+  description: "Geonames is a geographical database available and accessible through various web services, containing over eleven million placenames.",
+  url: "https://www.geonames.org/",
+  apiUrl: "https://secure.geonames.org/",
+}
+
 export const geonamesApi = createApi({
   reducerPath: "geonames",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://secure.geonames.org/" }),
+  baseQuery: fetchBaseQuery({ baseUrl: vocabInfo.apiUrl }),
   endpoints: (build) => ({
     fetchGeonamesFreeText: build.query({
       query: (value) => ({

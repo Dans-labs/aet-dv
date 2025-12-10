@@ -3,3 +3,4 @@ export { default as keywordsReducer } from '../src/slice';
 export { datastationsApi } from "../src/api/datastationsVocabs";
 export { geonamesApi } from "../src/api/geonames";
 export { wikidataApi } from "../src/api/wikidata";
+export { dataverseApi } from "../src/api/dataverse";

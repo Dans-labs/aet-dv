@@ -22,7 +22,7 @@ const GeoData = lazy(() =>
 );
 
 export type MenuKey = 'swh' | 'fileUpload' | 'keywords' | 'geo';
-export type KeywordsMenuKey = 'wikidata' | 'geonames' | 'elsst' | 'narcis' | 'dansCollections' | 'gettyAat';
+export type KeywordsMenuKey = 'wikidata' | 'geonames' | 'elsst' | 'narcis' | 'dansCollectionsSsh' | 'gettyAat';
 
 type DrawerRenderProps = {
   useAppDispatch: () => AppDispatch;
