@@ -98,7 +98,7 @@ export const submitDirectApi = createApi({
         }
 
         return {
-          url: `/api/datasets/:persistentId/editMetadata?persistentId=${doi}`,
+          url: `/api/datasets/:persistentId/editMetadata?persistentId=${doi}&replace=true`,
           method: "PUT",
           headers: headers,
           body: data,

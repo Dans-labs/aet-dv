@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { VocabTypeEntry } from "../helpers";
 
 type Datastations = "elsst" | "narcis" | "dansCollectionsSsh" | "gettyAat";
 interface DatastationsItem {
@@ -20,7 +21,7 @@ const vocabMap: Record<Datastations, string> = {
   gettyAat: "AATC",
 };
 
-export const vocabInfo = {
+export const vocabInfo: Record<Datastations, VocabTypeEntry> = {
   elsst: {
     name: "ELSST",
     description: "The European Language for Subject-Specific Thesauri (ELSST) is a multilingual thesaurus for subject indexing and retrieval of scientific information in Europe.",
@@ -40,6 +41,7 @@ export const vocabInfo = {
     name: "Getty AAT",
     description: "The Getty Art & Architecture Thesaurus (AAT) is a structured vocabulary for describing art, architecture, and material culture.",
     url: "https://vocabs.datastations.nl/AATC/en",
+    alternativeNames: ["AAT", "Art and Architecture Thesaurus"],
   },
 }
 

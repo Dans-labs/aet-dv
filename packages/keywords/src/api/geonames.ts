@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { VocabTypeEntry } from "../helpers";
 
 type GeonamesItem = {
   name: string;
@@ -15,7 +16,7 @@ type GeonamesResponse = {
   ocean?: GeonamesItem;
 }
 
-export const vocabInfo = {
+export const vocabInfo: VocabTypeEntry = {
   name: "Geonames",
   description: "Geonames is a geographical database available and accessible through various web services, containing over eleven million placenames.",
   url: "https://www.geonames.org/",

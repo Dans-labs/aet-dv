@@ -13,6 +13,14 @@ export const vocabMap = {
   geonames: geonamesVocab,
 }
 
+export interface VocabTypeEntry {
+  name: string;
+  description: string;
+  url: string;
+  apiUrl?: string;
+  alternativeNames?: string[];
+}
+
 export function keywordFormatter(keywords: KeywordsFormState) {
   return {
     fields: [{
@@ -66,14 +74,24 @@ export function reverseKeywordFormatter(fields: KeywordField[]): KeywordsFormSta
 
   fields.forEach((field: any) => {
     const vocab = field.keywordVocabulary.value;
-    const source = Object.keys(vocabMap).find(key => vocabMap[key as keyof typeof vocabMap].name === vocab);
+    // match vocab to source, also check for optional alternative names
+    const source = Object.keys(vocabMap).find(key => {
+      const vocabEntry = vocabMap[key as keyof typeof vocabMap];
+      return vocabEntry.name === vocab || (vocabEntry.alternativeNames && vocabEntry.alternativeNames.includes(vocab));
+    });
+    console.log(field)
     if (source) {
+      console.log(source)
       keywords[source as keyof KeywordsFormState].push({
         label: field.keywordValue.value,
-        value: field.keywordTermURI.value,
+        value: field.keywordTermURI?.hasOwnProperty("value") ? field.keywordTermURI.value : field.keywordVocabularyURI.value,
+        // if not all values are present from DV, set a warning
+        warning: !(field.keywordValue?.value && field.keywordTermURI?.value && field.keywordVocabulary?.value && field.keywordVocabularyURI?.value),
       });
     }
   });
+
+  console.log(keywords)
 
   return keywords;
 }

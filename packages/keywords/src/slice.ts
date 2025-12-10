@@ -4,6 +4,7 @@ import { RootState } from "./";
 export type Keyword = {
   label: string;
   value: string;
+  warning?: boolean;
 }
 
 export type KeywordsFormState = {

@@ -7,6 +7,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Chip from "@mui/material/Chip";
 import InputAdornment from "@mui/material/InputAdornment";
 import LaunchIcon from "@mui/icons-material/Launch";
+import ErrorIcon from "@mui/icons-material/Error";
 
 type Value = {
   label: string;
@@ -18,6 +19,7 @@ type Value = {
   idLabel?: string;
   id?: string;
   url?: string;
+  warning?: boolean;
 };
 
 export function AutocompleteAPIField({
@@ -200,6 +202,8 @@ function InfoChip({option, getItemProps, index}: {
 }) {
   const {key, ...itemProps} = getItemProps({ index });
 
+  console.log(option)
+
   return (
     <Chip
       key={key} // Pass key directly
@@ -207,7 +211,16 @@ function InfoChip({option, getItemProps, index}: {
       label={option.label}
       size="medium"
       icon={
-        (option.value && option.value.startsWith("http")) ?
+        (option.warning) ?
+        <InputAdornment
+          position="start"
+          sx={{ ml: 1.5, mr: 0.5, zIndex: 1 }}
+        >
+          <Tooltip title="Incomplete keyword in Dataverse. Recommended to replace it.">
+            <ErrorIcon color="warning" />
+          </Tooltip>
+        </InputAdornment>
+        : (option.value && option.value.startsWith("http")) ?
           <InfoLink
             link={option.value}
             chip={true}
