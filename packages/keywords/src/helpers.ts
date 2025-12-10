@@ -1,4 +1,4 @@
-import type { KeywordsFormState } from "./slice";
+import { initialState, type KeywordsFormState } from "./slice";
 import { vocabInfo as datastationsVocabs } from "./api/datastationsVocabs";
 import { vocabInfo as wikidataVocab } from "./api/wikidata";
 import { vocabInfo as geonamesVocab } from "./api/geonames";
@@ -63,25 +63,16 @@ export function keywordFormatter(keywords: KeywordsFormState) {
 }
 
 export function reverseKeywordFormatter(fields: KeywordField[]): KeywordsFormState {
-  const keywords: KeywordsFormState = {
-    wikidata: [],
-    geonames: [],
-    elsst: [],
-    narcis: [],
-    dansCollectionsSsh: [],
-    gettyAat: [],
-  };
+  const keywords = initialState;
 
   fields.forEach((field: any) => {
     const vocab = field.keywordVocabulary.value;
     // match vocab to source, also check for optional alternative names
     const source = Object.keys(vocabMap).find(key => {
       const vocabEntry = vocabMap[key as keyof typeof vocabMap];
-      return vocabEntry.name === vocab || (vocabEntry.alternativeNames && vocabEntry.alternativeNames.includes(vocab));
+      return vocabEntry.name === vocab || (vocabEntry as VocabTypeEntry).alternativeNames?.includes(vocab);
     });
-    console.log(field)
     if (source) {
-      console.log(source)
       keywords[source as keyof KeywordsFormState].push({
         label: field.keywordValue.value,
         value: field.keywordTermURI?.hasOwnProperty("value") ? field.keywordTermURI.value : field.keywordVocabularyURI.value,

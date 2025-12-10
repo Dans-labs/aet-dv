@@ -18,7 +18,7 @@ export type KeywordsFormState = {
 
 export type KeywordSource = keyof KeywordsFormState;
 
-const initialState: KeywordsFormState = {
+export const initialState: KeywordsFormState = {
   wikidata: [],
   gettyAat: [],
   geonames: [],
