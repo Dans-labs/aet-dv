@@ -47,7 +47,6 @@ export function AutocompleteAPIField({
   value: Value | Value[];
   disabled?: boolean;
 }) {  
-  console.log
   return (
     <Autocomplete
       multiple={multiSelect}
@@ -201,8 +200,6 @@ function InfoChip({option, getItemProps, index}: {
   index: number;
 }) {
   const {key, ...itemProps} = getItemProps({ index });
-
-  console.log(option)
 
   return (
     <Chip
