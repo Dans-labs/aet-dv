@@ -50,7 +50,7 @@ export type MenuConfig = {
 };
 
 // Loading fallback component
-const LoadingFallback = () => (
+export const LoadingFallback = () => (
   <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
     <CircularProgress />
   </div>

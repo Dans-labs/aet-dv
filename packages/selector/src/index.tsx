@@ -6,8 +6,6 @@ import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { getMenuItems, type MenuConfig } from './menuConfig';
-import { Provider as ReduxProvider } from "react-redux";
-import { store } from "./store";
 import { useAppDispatch, useAppSelector } from "./hooks";
 import ListItemText from '@mui/material/ListItemText';
 import List from '@mui/material/List';
@@ -19,10 +17,13 @@ import CloseIcon from '@mui/icons-material/Close';
 import Divider from '@mui/material/Divider';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { StoreHooksProvider } from '@dans-dv/shared-store';
+import { DynamicStoreProvider } from './DynamicStoreProvider';
 
 export default function MenuButton({ config }: { config: MenuConfig }) {
   const [edit, setEdit] = useState<null | string>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [storeInitialized, setStoreInitialized] = useState(false);
+
   const open = Boolean(anchorEl);
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -30,81 +31,85 @@ export default function MenuButton({ config }: { config: MenuConfig }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const handleMenuItemClick = (key: string) => {
+    handleClose();
+    setEdit(key);
+    setStoreInitialized(true); // Initialize store on first drawer open
+  };
 
   const menuItems = getMenuItems(config).filter(item => item.isEnabled);
 
   return (
-    <ReduxProvider store={store}>
-      <StoreHooksProvider hooks={{ useAppDispatch, useAppSelector }}>
-        <Box
-          sx={{
-            mt: 2,        
-          }}
-        >
-          <Button
-            aria-controls={open ? 'basic-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-            onClick={handleClick}
-            variant="contained"
-            sx={{ width: '100%' }}
-            endIcon={<ArrowDropDownIcon />}
+    <Box
+      sx={{
+        mt: 2,        
+      }}
+    >
+      <Button
+        aria-controls={open ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+        variant="contained"
+        sx={{ width: '100%' }}
+        endIcon={<ArrowDropDownIcon />}
+      >
+        Advanced edit
+      </Button>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+      >
+        {menuItems.map(item => (
+          <MenuItem
+            key={item.key}
+            onClick={() => handleMenuItemClick(item.key)}
           >
-            Advanced edit
-          </Button>
-          <Menu
-            id="basic-menu"
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-          >
-            {menuItems.map(item => (
-              <MenuItem
-                key={item.key}
-                onClick={() => {
-                  handleClose();
-                  setEdit(item.key);
-                }}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText>{item.label}</ListItemText>
-              </MenuItem>
-            ))}
-          </Menu>
-
-          <Drawer open={edit !== null} onClose={(_event, reason) => {
-            if (reason === "backdropClick") return
-            setEdit(null);
-          }}>
-            <Stack direction="row">
-              <List sx={{ borderRight: '1px solid #ccc', position: 'fixed', height: '100vh'}}>
-                <ListItem disablePadding disableGutters sx={{ mb: 1 }}>
-                  <ListItemButton onClick={() => setEdit(null)} sx={{ pt: 1.5, pb: 1.5 }} >
-                    <ListItemIcon sx={{ minWidth: 'auto' }}>
-                      <CloseIcon/>
-                    </ListItemIcon>
-                  </ListItemButton>
-                </ListItem>
-                <Divider />
-                {menuItems.map(item => (
-                  <ListItem key={item.key} disablePadding>
-                    <Tooltip title={item.label} placement="right">
-                      <ListItemButton onClick={() => setEdit(item.key)}>
-                        <ListItemIcon sx={{ minWidth: 'auto' }}>
-                          {item.icon}
-                        </ListItemIcon>
-                      </ListItemButton>
-                    </Tooltip>
+            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemText>{item.label}</ListItemText>
+          </MenuItem>
+        ))}
+      </Menu>
+      {/* Initialize store once, then keep it alive */}
+      {storeInitialized && (
+        <DynamicStoreProvider menuItems={menuItems}>
+          <StoreHooksProvider hooks={{ useAppDispatch, useAppSelector }}>
+            <Drawer open={edit !== null} onClose={(_event, reason) => {
+              if (reason === "backdropClick") return
+              setEdit(null);
+            }}>
+              <Stack direction="row">
+                <List sx={{ borderRight: '1px solid #ccc', position: 'fixed', height: '100vh'}}>
+                  <ListItem disablePadding disableGutters sx={{ mb: 1 }}>
+                    <ListItemButton onClick={() => setEdit(null)} sx={{ pt: 1.5, pb: 1.5 }} >
+                      <ListItemIcon sx={{ minWidth: 'auto' }}>
+                        <CloseIcon/>
+                      </ListItemIcon>
+                    </ListItemButton>
                   </ListItem>
-                ))}
-              </List>
-              <Box sx={{ pr: 6, pt: 4, pb: 4, pl: 12 }}>
-                {edit && menuItems.find(item => item.key === edit)?.renderDrawerContent()}
-              </Box>
-            </Stack>
-          </Drawer>
-        </Box>
-      </StoreHooksProvider>
-    </ReduxProvider>
+                  <Divider />
+                  {menuItems.map(item => (
+                    <ListItem key={item.key} disablePadding>
+                      <Tooltip title={item.label} placement="right">
+                        <ListItemButton onClick={() => setEdit(item.key)}>
+                          <ListItemIcon sx={{ minWidth: 'auto' }}>
+                            {item.icon}
+                          </ListItemIcon>
+                        </ListItemButton>
+                      </Tooltip>
+                    </ListItem>
+                  ))}
+                </List>
+                <Box sx={{ pr: 6, pt: 4, pb: 4, pl: 12 }}>
+                  {edit && menuItems.find(item => item.key === edit)?.renderDrawerContent()}
+                </Box>
+              </Stack>
+            </Drawer>
+          </StoreHooksProvider>
+        </DynamicStoreProvider>
+      )}
+    </Box>
   );
 }
