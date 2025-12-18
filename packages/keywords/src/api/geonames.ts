@@ -10,7 +10,7 @@ type GeonamesItem = {
   lng: string;
 }
 
-type GeonamesResponse = {
+export type GeonamesResponse = {
   totalResultsCount: number;
   geonames: GeonamesItem[];
   ocean?: GeonamesItem;

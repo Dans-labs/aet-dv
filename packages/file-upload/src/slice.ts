@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "./";
 import { SelectedFile } from "./FileUpload";
 
 const initialState: SelectedFile[] = [];
@@ -9,6 +8,8 @@ interface ReduxFileActions<K extends keyof SelectedFile = keyof SelectedFile> {
   type: K
   value: SelectedFile[K]
 }
+
+export type FilesState = {files: SelectedFile[]};
 
 export const filesSlice = createSlice({
   name: "files",
@@ -47,6 +48,6 @@ export const filesSlice = createSlice({
 export const { addFiles, removeFile, setFileMeta, resetFiles, queueFiles } = filesSlice.actions;
 
 // Select values from state
-export const getFiles = (state: RootState): SelectedFile[] => state.files;
+export const getFiles = (state: FilesState): SelectedFile[] => state.files;
 
 export default filesSlice.reducer;

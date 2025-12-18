@@ -9,7 +9,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import { setFileMeta } from "./slice";
-import { AppDispatch } from "./";
 import SubtitlesIcon from '@mui/icons-material/Subtitles';
 import { isDisabled } from "./utils/fileHelpers";
 import { useThumbnails } from "./utils/hooks";
@@ -17,6 +16,8 @@ import { Box, CircularProgress } from "@mui/material";
 import Button from '@mui/material/Button';
 import { useState } from "react";
 import TranscriptEditor from "./TranscriptEditor";
+import { useStoreHooks } from '@dans-dv/shared-store';
+import type { FilesState } from "./slice";
 
 const supportedLanguages = [
   { name: 'Dutch', id: 'nl' },
@@ -33,13 +34,12 @@ const supportedLanguages = [
 
 export const AudioProcessing = ({ 
   file, 
-  useAppDispatch, 
   last 
 }: { 
   file: SelectedFile, 
-  useAppDispatch: AppDispatch, 
   last: boolean 
 }) => {
+  const { useAppDispatch } = useStoreHooks<{ files: FilesState }>();
   const dispatch = useAppDispatch();
   const disabled = isDisabled(file);
   const [ editorOpen, setEditorOpen ] = useState(false);
@@ -160,8 +160,9 @@ export const AudioProcessing = ({
   );
 }
 
-export function ThumbnailProcessing({ file, useAppDispatch, last }: { file: SelectedFile, useAppDispatch: AppDispatch, last: boolean }) {
+export function ThumbnailProcessing({ file, last }: { file: SelectedFile, last: boolean }) {
   const { thumbnails, loading } = useThumbnails(file);
+  const { useAppDispatch } = useStoreHooks<{ files: FilesState }>();
   const dispatch = useAppDispatch();
   const disabled = isDisabled(file);
   console.log(file)

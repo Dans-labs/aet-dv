@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "./";
 
 export type Keyword = {
   label: string;
@@ -15,6 +14,8 @@ export type KeywordsFormState = {
   narcis: Keyword[];
   dansCollectionsSsh: Keyword[];
 };
+
+export type KeywordState = {keywords: KeywordsFormState};
 
 export type KeywordSource = keyof KeywordsFormState;
 
@@ -50,8 +51,8 @@ export const keywordsSlice = createSlice({
 export const { setField, setAllFields, resetFields } = keywordsSlice.actions;
 
 export const getField = <K extends keyof KeywordsFormState>(field: K) =>
-  (state: RootState) => state.keywords[field];
+  (state: KeywordState) => state.keywords[field];
 
-export const getFields = () => (state: RootState) => state.keywords;
+export const getFields = () => (state: KeywordState) => state.keywords;
 
 export default keywordsSlice.reducer;

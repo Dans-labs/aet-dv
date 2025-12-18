@@ -1,6 +1,6 @@
 import * as tus from "tus-js-client";
 import { setFileMeta } from "./slice";
-import { SelectedFile } from "./FileUpload";
+import { type SelectedFile } from "./FileUpload";
 
 const manualError = async (
   fileName: string,

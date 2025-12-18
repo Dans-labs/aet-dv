@@ -9,6 +9,7 @@
   "dependencies": {
     "@dans-dv/guidance": "workspace:*",
     "@dans-dv/layout": "workspace:*",
+    "@dans-dv/shared-store": "workspace:*",
     "@dans-dv/submit": "workspace:*",
     "@dans-dv/wrapper": "workspace:*",
     "@mui/icons-material": "^7.1.0",

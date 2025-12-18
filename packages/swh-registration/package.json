@@ -9,6 +9,7 @@
   "dependencies": {
     "@dans-dv/inputs": "workspace:*",
     "@dans-dv/layout": "workspace:*",
+    "@dans-dv/shared-store": "workspace:*",
     "@dans-dv/submit": "workspace:*",
     "@dans-dv/wrapper": "workspace:*",
     "@mui/material": "^7.1.0",

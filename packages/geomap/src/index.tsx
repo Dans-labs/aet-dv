@@ -1,19 +1,11 @@
 /// <reference path="./types/index.ts" />
-
-import type { TypedUseSelectorHook } from "react-redux";
 import { useApiToken } from "@dans-dv/wrapper";
 import { TabHeader, BoxWrap } from "@dans-dv/layout";
 import DrawMap from "./Map";
 import { Submit, useSubmitDataMutation } from "@dans-dv/submit";
 import { getFeatures, setFeatures, type GeomapState, type ExtendedMapFeature } from "./slice";
+import { useStoreHooks } from '@dans-dv/shared-store';
 
-export type RootState = {geomap: GeomapState};
-export type AppDispatch = (action: any) => any;
-export type AppSelector = TypedUseSelectorHook<RootState>;
-export type ReduxProps = {
-  useAppDispatch: AppDispatch;
-  useAppSelector: AppSelector;
-}
 export type DrawConfig = {
   point?: boolean;
   line?: boolean;
@@ -21,9 +13,7 @@ export type DrawConfig = {
   rectangle?: boolean;
 }
 
-export default function GeoData({ config, useAppDispatch, useAppSelector }: {
-  useAppDispatch: () => AppDispatch;
-  useAppSelector: TypedUseSelectorHook<RootState>;
+export default function GeoData({ config }: {
   config: {
     geonames?: boolean;
     map?: {
@@ -33,6 +23,7 @@ export default function GeoData({ config, useAppDispatch, useAppSelector }: {
 }) {
   const [ submitData, { isLoading, isSuccess, isError } ] = useSubmitDataMutation();
   const { apiToken, doi } = useApiToken();
+  const { useAppDispatch, useAppSelector } = useStoreHooks<GeomapState>();
   const dispatch = useAppDispatch();
   const value = useAppSelector(getFeatures());
 

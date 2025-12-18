@@ -7,7 +7,7 @@ type DansFilesFormat = {
   "required-convert-to": string;
 }
 
-type DansFilesResponse = {
+export type DansFilesResponse = {
   type: string;
   description: DansFilesDescription[];
   format: DansFilesFormat[];

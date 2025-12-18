@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export interface CodeMeta {
+export interface CodeMetaResponse {
   "@context": string;
   "@type": "SoftwareSourceCode";
   name: string;
@@ -52,7 +52,7 @@ export const codemetaApi = createApi({
   reducerPath: "codemetaApi",
   baseQuery: fetchBaseQuery(),
   endpoints: (build) => ({
-    fetchCodemeta: build.query<CodeMeta, string>({
+    fetchCodemeta: build.query<CodeMetaResponse, string>({
       async queryFn(repoUrl) {
         const info = extractRepoInfo(repoUrl);
         if (!info) {

@@ -20,13 +20,15 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { useFetchGroupedListQuery } from "./api/dansFormats";
-import type { ReduxProps, AppDispatch } from "./";
 import type { SelectedFile, FileActions } from "./FileUpload";
 import { findFileGroup, isDisabled } from "./utils/fileHelpers";
 import Typography from "@mui/material/Typography";
 import { AudioProcessing, ThumbnailProcessing } from "./FileProcessing";
+import { useStoreHooks } from '@dans-dv/shared-store';
+import type { FilesState } from "./slice";
 
-const FileTable = ({ useAppDispatch, useAppSelector }: ReduxProps) => {
+const FileTable = () => {
+  const { useAppSelector } = useStoreHooks<FilesState>();
   const selectedFiles = useAppSelector<SelectedFile[]>(getFiles);
 
   return selectedFiles.length !== 0 ?
@@ -45,7 +47,7 @@ const FileTable = ({ useAppDispatch, useAppSelector }: ReduxProps) => {
           </TableHead>
           <TableBody>
             {selectedFiles.map((file) => (
-              <FileTableRow key={file.name} file={file} useAppDispatch={useAppDispatch} />
+              <FileTableRow key={file.name} file={file} />
             ))}
           </TableBody>
         </Table>
@@ -54,7 +56,8 @@ const FileTable = ({ useAppDispatch, useAppSelector }: ReduxProps) => {
     : null;
 };
 
-const FileActionOptions = ({ file, type, useAppDispatch }: {file: SelectedFile; type: "process" | "role"; useAppDispatch: AppDispatch }) => {
+const FileActionOptions = ({ file, type }: {file: SelectedFile; type: "process" | "role"; }) => {
+  const { useAppDispatch } = useStoreHooks<FilesState>();
   const dispatch = useAppDispatch();
   // Need to check the type of file and provide valid processing options
   const { data } = useFetchGroupedListQuery(null);
@@ -118,7 +121,8 @@ const FileActionOptions = ({ file, type, useAppDispatch }: {file: SelectedFile; 
   );
 };
 
-const FileTableRow = ({ file, useAppDispatch }: {file: SelectedFile; useAppDispatch: AppDispatch}) => {
+const FileTableRow = ({ file }: {file: SelectedFile}) => {
+  const { useAppDispatch } = useStoreHooks<{ files: FilesState }>();
   const dispatch = useAppDispatch();
   const disabled = isDisabled(file);
 
@@ -208,10 +212,10 @@ const FileTableRow = ({ file, useAppDispatch }: {file: SelectedFile; useAppDispa
           />
         </TableCell>
         <TableCell sx={{ px: 1, py: 2, minWidth: 140, maxWidth: 140 }}>
-          <FileActionOptions type="role" file={file} useAppDispatch={useAppDispatch} />
+          <FileActionOptions type="role" file={file} />
         </TableCell>
         <TableCell sx={{ px: 1, py: 2, minWidth: 150 }}>
-          <FileActionOptions type="process" file={file} useAppDispatch={useAppDispatch} />
+          <FileActionOptions type="process" file={file} />
         </TableCell>
       </TableRow>
       {file.process && file.process.length > 0 && 
@@ -219,9 +223,9 @@ const FileTableRow = ({ file, useAppDispatch }: {file: SelectedFile; useAppDispa
           <TableCell colSpan={6} sx={{ p: 0, backgroundColor: "#f9f9f9", boxShadow: "0 4px 6px -2px rgba(0, 0, 0, 0.08) inset" }}>
             {file.process.map((process, i) =>
               process.value === "transcribe_audio" ?
-              <AudioProcessing key={`audio-${i}`} file={file} useAppDispatch={useAppDispatch} last={i === file.process!.length - 1} /> :
+              <AudioProcessing key={`audio-${i}`} file={file} last={i === file.process!.length - 1} /> :
               process.value === "create_thumbnail" ?
-              <ThumbnailProcessing key={`thumbnail-${i}`} file={file} useAppDispatch={useAppDispatch} last={i === file.process!.length - 1} /> :
+              <ThumbnailProcessing key={`thumbnail-${i}`} file={file} last={i === file.process!.length - 1} /> :
               null
             )}
           </TableCell>
@@ -290,7 +294,5 @@ const UploadProgress = ({ file, hasProcessingOptions }: { file: SelectedFile, ha
     </TableCell>
   );
 };
-
-
 
 export default FileTable;

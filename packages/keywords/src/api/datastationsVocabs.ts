@@ -9,7 +9,8 @@ interface DatastationsItem {
   altLabel: string;
   localname: string;
 }
-interface DatastationsResponse {
+
+export interface DatastationsResponse {
   results: DatastationsItem[];
 }
 

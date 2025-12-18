@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import FileTable from "./FileTable";
-import FileUpload, { type SelectedFile } from "./FileUpload";
-import type { TypedUseSelectorHook } from "react-redux";
+import FileUpload from "./FileUpload";
 import { getFiles, queueFiles } from "./slice";
 import Button from "@mui/material/Button";
 import { /*uploadFile,*/ simulateUploadFile } from "./tus";
@@ -16,18 +15,13 @@ import ListItemText from '@mui/material/ListItemText';
 import { fileProcessing } from "./utils/fileOptions";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
+import { useStoreHooks } from '@dans-dv/shared-store';
+import type { FilesState } from "./slice";
 
-export type RootState = {files: SelectedFile[]};
-export type AppDispatch = () => (action: any) => any;
-export type AppSelector = TypedUseSelectorHook<RootState>;
-export type ReduxProps = {
-  useAppDispatch: AppDispatch;
-  useAppSelector: AppSelector;
-}
-
-export default function Files(props: ReduxProps) {
-  const dispatch = props.useAppDispatch();
-  const selectedFiles = props.useAppSelector(getFiles);
+export default function Files() {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<FilesState>();
+  const dispatch = useAppDispatch();
+  const selectedFiles = useAppSelector(getFiles);
   const [ submitData, { isLoading: submitLoading } ] = useSubmitDataMutation();
   const { apiToken, doi } = useApiToken();
 
@@ -38,8 +32,8 @@ export default function Files(props: ReduxProps) {
         subtitle="Add (very large) files to your dataset, add additional metadata per file, and select processing options. Processed files will be added to your dataset automatically."
       />
       <Feature />
-      <FileUpload {...props} />
-      <FileTable {...props} />
+      <FileUpload />
+      <FileTable />
       <Button 
         variant="contained" 
         color="primary" 
@@ -55,16 +49,17 @@ export default function Files(props: ReduxProps) {
       >
         Upload
       </Button>
-      <FileUploader {...props} />
+      <FileUploader />
     </BoxWrap>
   );
 }
 
 const maxConcurrentUploads = 3;
 
-function FileUploader({useAppSelector, useAppDispatch}: ReduxProps) {
+function FileUploader() {
   // Component that manages file upload queue.
   // Check files that have status queued, and start uploading when a spot becomes available in the queue.
+  const { useAppSelector, useAppDispatch } = useStoreHooks<FilesState>();
   const selectedFiles = useAppSelector(getFiles);
   const dispatch = useAppDispatch();
   // const { apiToken, doi } = useApiToken();

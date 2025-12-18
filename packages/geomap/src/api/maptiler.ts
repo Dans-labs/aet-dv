@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-interface MaptilerCoordinateSystemResponse {
+export interface MaptilerCoordinateSystemResponse {
   results: {
     id: {
       authority: string;
@@ -12,7 +12,7 @@ interface MaptilerCoordinateSystemResponse {
   }[];
 }
 
-interface MaptilerConversionResponse {
+export interface MaptilerConversionResponse {
   results: {
     x: number;
     y: number;

@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "./";
 
 export type SWHFormState = {
   repository_url: string;
@@ -14,6 +13,8 @@ const initialState: SWHFormState = {
   software_name: '',
   software_description: '',
 };
+
+export type SWHState = {swh: SWHFormState};
 
 export const swhSlice = createSlice({
   name: "swh",
@@ -51,6 +52,6 @@ export const swhSlice = createSlice({
 export const { setField, setFieldArray, resetValues } = swhSlice.actions;
 
 export const getField = <K extends keyof SWHFormState>(field: K) =>
-  (state: RootState) => state.swh[field];
+  (state: SWHState) => state.swh[field];
 
 export default swhSlice.reducer;

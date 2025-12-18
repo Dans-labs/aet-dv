@@ -116,38 +116,37 @@ function Editor({
   const segments = transcript.segments ?? [];
 
   // on load, fetch transcript data (basic for now)
-useEffect(() => {
-  const fetchTranscript = async () => {
-    const response = await fetch(`${file.audioProcessing?.transcriptUrl}`);
-    const data: Transcript = await response.json();
+  useEffect(() => {
+    const fetchTranscript = async () => {
+      const response = await fetch(`${file.audioProcessing?.transcriptUrl}`);
+      const data: Transcript = await response.json();
 
-    const rawSegments = data.segments ?? [];
+      const rawSegments = data.segments ?? [];
 
-    // extract raw names from transcript
-    const uniqueNames = [...new Set(
-      rawSegments.map(s => typeof s.speaker === "string" ? s.speaker : s.speaker?.name)
-    )];
+      // extract raw names from transcript
+      const uniqueNames = [...new Set(
+        rawSegments.map(s => typeof s.speaker === "string" ? s.speaker : s.speaker?.name)
+      )];
 
-    // build your speaker list
-    const speakerList: Speaker[] = uniqueNames.map(n => ({
-      id: n,
-      name: n,
-    }));
+      // build your speaker list
+      const speakerList: Speaker[] = uniqueNames.map(n => ({
+        id: n,
+        name: n,
+      }));
 
-    // normalize segments to use real Speaker objects
-    const speakersByName = new Map(speakerList.map(s => [s.name, s]));
+      // normalize segments to use real Speaker objects
+      const speakersByName = new Map(speakerList.map(s => [s.name, s]));
 
-    const normalizedSegments: Segment[] = rawSegments.map(s => ({
-      ...s,
-      speaker:
-        typeof s.speaker === "string"
-          ? speakersByName.get(s.speaker)!
-          : speakersByName.get(s.speaker.name)!,
-    }));
-
-    setSpeakers(speakerList);
-    setTranscript({ segments: normalizedSegments });
-  };
+      const normalizedSegments: Segment[] = rawSegments.map(s => ({
+        ...s,
+        speaker:
+          typeof s.speaker === "string"
+            ? speakersByName.get(s.speaker)!
+            : speakersByName.get(s.speaker.name)!,
+      }));
+      setSpeakers(speakerList);
+      setTranscript({ segments: normalizedSegments });
+    };
 
   fetchTranscript();
 }, [file.audioProcessing?.transcriptUrl]);
@@ -309,7 +308,6 @@ const Segment = memo(function Segment({
               label="Speaker"
               size="small"
               onChange={e => {
-                console.log(e.target.value);
                 const selectedSpeaker = speakers.find(s => s.id === e.target.value);
                 if (selectedSpeaker) {
                   update(index, { speaker: selectedSpeaker });

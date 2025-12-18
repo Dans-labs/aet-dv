@@ -1,5 +1,4 @@
-import { getFields, setField, setAllFields, type KeywordsFormState, type KeywordSource, type Keyword } from "./slice";
-import type { TypedUseSelectorHook } from "react-redux";
+import { getFields, setAllFields, setField, type KeywordSource, type Keyword } from "./slice";
 import { useDebounce } from "use-debounce";
 import { useEffect, useState } from "react";
 import { useFetchDatastationsTermQuery } from "./api/datastationsVocabs";
@@ -14,17 +13,14 @@ import { Submit, useSubmitDirectDataMutation } from "@dans-dv/submit";
 import { useApiToken } from "@dans-dv/wrapper";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { vocabMap, keywordFormatter } from "./helpers";
-
-type AppDispatch = (action: any) => any;
-export type RootState = {keywords: KeywordsFormState};
+import { useStoreHooks } from "@dans-dv/shared-store";
+import type { KeywordState } from "./slice";
 
 type DatastationTypes = "elsst" | "narcis" | "dansCollectionsSsh" | "gettyAat";
 
 const datastationConfigs: DatastationTypes[] = ["elsst", "narcis", "dansCollectionsSsh", "gettyAat"];
 
-export function KeywordFields({ config, useAppDispatch, useAppSelector }: {
-  useAppDispatch: () => AppDispatch;
-  useAppSelector: TypedUseSelectorHook<RootState>;
+export function KeywordFields({ config }: {
   config: {
     wikidata?: boolean;
     geonames?: boolean;
@@ -34,6 +30,7 @@ export function KeywordFields({ config, useAppDispatch, useAppSelector }: {
     gettyAat?: boolean;
   };
 }) {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<KeywordState>();
   const dispatch = useAppDispatch();
   const keywords = useAppSelector(getFields());
   const [ submitDirectData, { isLoading: submitLoading, isSuccess: submitSuccess, isError: submitError, error: submitErrorMessage } ] = useSubmitDirectDataMutation();

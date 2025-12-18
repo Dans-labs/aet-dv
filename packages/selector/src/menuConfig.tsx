@@ -1,6 +1,4 @@
 import { type ReactElement, lazy, Suspense } from 'react';
-import type { RootState, AppDispatch } from "./store";
-import { TypedUseSelectorHook } from "react-redux";
 import TerminalIcon from '@mui/icons-material/Terminal';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import KeyIcon from '@mui/icons-material/Key';
@@ -24,16 +22,11 @@ const GeoData = lazy(() =>
 export type MenuKey = 'swh' | 'fileUpload' | 'keywords' | 'geo';
 export type KeywordsMenuKey = 'wikidata' | 'geonames' | 'elsst' | 'narcis' | 'dansCollectionsSsh' | 'gettyAat';
 
-type DrawerRenderProps = {
-  useAppDispatch: () => AppDispatch;
-  useAppSelector: TypedUseSelectorHook<RootState>;
-};
-
 export type MenuItemConfig = {
   key: MenuKey;
   label: string;
   isEnabled: boolean;
-  renderDrawerContent: (hooks: DrawerRenderProps) => ReactElement | null;
+  renderDrawerContent: () => ReactElement | null;
   icon: ReactElement;
 };
 
@@ -68,9 +61,9 @@ export const getMenuItems = (config: MenuConfig): MenuItemConfig[] => [
     key: 'swh',
     label: 'Register with Software Heritage',
     isEnabled: !!config.swh,
-    renderDrawerContent: (props: DrawerRenderProps) => (
+    renderDrawerContent: () => (
       <Suspense fallback={<LoadingFallback />}>
-        <SoftwareHeritageForm {...props} />
+        <SoftwareHeritageForm />
       </Suspense>
     ),
     icon: <TerminalIcon />,
@@ -79,9 +72,9 @@ export const getMenuItems = (config: MenuConfig): MenuItemConfig[] => [
     key: 'fileUpload',
     label: 'Large file uploads and processing',
     isEnabled: !!config.fileUpload,
-    renderDrawerContent: (props: DrawerRenderProps) => (
+    renderDrawerContent: () => (
       <Suspense fallback={<LoadingFallback />}>
-        <FileUpload {...props} />
+        <FileUpload />
       </Suspense>
     ),
     icon: <CloudUploadIcon />,
@@ -90,9 +83,9 @@ export const getMenuItems = (config: MenuConfig): MenuItemConfig[] => [
     key: 'keywords',
     label: 'Easy keyword management',
     isEnabled: !!config.keywords,
-    renderDrawerContent: (props: DrawerRenderProps) => config.keywords ? (
+    renderDrawerContent: () => config.keywords ? (
       <Suspense fallback={<LoadingFallback />}>
-        <Keywords {...props} config={config.keywords} />
+        <Keywords config={config.keywords} />
       </Suspense>
     ) : null,
     icon: <KeyIcon />,
@@ -101,9 +94,9 @@ export const getMenuItems = (config: MenuConfig): MenuItemConfig[] => [
     key: 'geo',
     label: 'Geospatial data',
     isEnabled: !!config.geo,
-    renderDrawerContent: (props: DrawerRenderProps) => config.geo ? (
+    renderDrawerContent: () => config.geo ? (
       <Suspense fallback={<LoadingFallback />}>
-        <GeoData {...props} config={config.geo} />
+        <GeoData config={config.geo} />
       </Suspense>
     ) : null,
     icon: <PublicIcon />,

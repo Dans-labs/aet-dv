@@ -14,10 +14,11 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import IconButton from "@mui/material/IconButton";
 import { getFiles, addFiles } from "./slice";
 import { useFetchSimpleListQuery } from "./api/dansFormats";
-import type { ReduxProps } from "./";
 import type { FileRejection } from "react-dropzone";
+import { useStoreHooks } from '@dans-dv/shared-store';
+import type { FilesState } from "./slice";
 
-const maxFileSize = 1000000 * 1024 * 1024; // 10 GB
+const maxFileSize = 1000000 * 1024 * 1024; // 10 GB max 
 
 export type FileActions = {
   label: string;
@@ -59,7 +60,8 @@ export type SelectedFile = {
   progress?: number;
 };
 
-const FileUpload = ({ useAppDispatch, useAppSelector }: ReduxProps) => {
+const FileUpload = () => {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<FilesState>();
   const dispatch = useAppDispatch();
   const currentFiles = useAppSelector(getFiles);
   const { data } = useFetchSimpleListQuery(null);

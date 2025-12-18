@@ -5,8 +5,6 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { getField, setField, setFieldArray, resetValues } from './slice';
 import { useLazyFetchCodemetaQuery } from "./codemetaApi";
-import type { SWHFormState } from "./slice";
-import type { TypedUseSelectorHook } from "react-redux";
 import Alert from '@mui/material/Alert';
 import CircularProgress from "@mui/material/CircularProgress";
 import { Submit, useSubmitDataMutation } from "@dans-dv/submit";
@@ -16,6 +14,8 @@ import IconButton from "@mui/material/IconButton";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { TabHeader, BoxWrap } from "@dans-dv/layout";
+import type { SWHState } from "./slice";
+import { useStoreHooks } from '@dans-dv/shared-store';
 
 type Inputs = {
   repository_url: string;
@@ -24,15 +24,10 @@ type Inputs = {
   software_description: string;
 }
 
-type AppDispatch = (action: any) => any;
-export type RootState = {swh: SWHFormState};
-
 const urlRegex = /^https?:\/\/[\w.-]+(\.[\w.-]+)+[/\w\-._~:/?#[\]@!$&'()*+,;=.]*$/i;
 
-export default function Form({ useAppDispatch, useAppSelector }: {
-  useAppDispatch: () => AppDispatch;
-  useAppSelector: TypedUseSelectorHook<RootState>;
-}) {
+export default function Form() {
+  const { useAppDispatch, useAppSelector } = useStoreHooks<SWHState>();
   const dispatch = useAppDispatch();
   const { apiToken, doi } = useApiToken();
   const [ submitData, { isLoading: submitLoading, isSuccess: submitSuccess, isError: submitError, error: submitErrorMessage } ] = useSubmitDataMutation();
@@ -184,7 +179,7 @@ export default function Form({ useAppDispatch, useAppSelector }: {
             }
           />
         }
-        { hasData && <AuthorArray control={control} dispatch={dispatch} /> }
+        { hasData && <AuthorArray control={control} /> }
         <Submit 
           disabled={!isValid || !hasData} 
           isLoading={submitLoading} 
@@ -197,7 +192,9 @@ export default function Form({ useAppDispatch, useAppSelector }: {
   );
 }
 
-function AuthorArray({ control, dispatch }: { control: any, dispatch: AppDispatch }) {
+function AuthorArray({ control }: { control: any }) {
+  const { useAppDispatch } = useStoreHooks<SWHState>();
+  const dispatch = useAppDispatch();
   const { fields, append, remove } = useFieldArray({
     control, // control props comes from useForm 
     name: 'software_author', // unique name for your Field Array

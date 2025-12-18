@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "./";
 import type { Feature, Point, Polygon, LineString, Geometry } from "geojson";
 import type { LngLatBoundsLike } from "react-map-gl/maplibre";
 
@@ -20,7 +19,7 @@ export interface CoordinateSystem extends OptionsType {
   bbox?: LngLatBoundsLike;
 };
 
-export type GeomapState = {
+export type GeomapStateValues = {
   value: ExtendedMapFeature[];
   wmsLayers: {
     name: string;
@@ -28,17 +27,19 @@ export type GeomapState = {
   }[];
 };
 
-const initialState: GeomapState = {
+const initialState: GeomapStateValues = {
   value: [],
   wmsLayers: [],
 };
+
+export type GeomapState = {geomap: GeomapStateValues};
 
 export const geomapSlice = createSlice({
   name: "geomap",
   initialState,
   reducers: {
     setFeatures(
-      state: GeomapState,
+      state: GeomapStateValues,
       action: PayloadAction<ExtendedMapFeature[]>
     ) {
       state.value = action.payload;
@@ -48,6 +49,6 @@ export const geomapSlice = createSlice({
 
 export const { setFeatures } = geomapSlice.actions;
 
-export const getFeatures = () => (state: RootState) => state.geomap.value;
+export const getFeatures = () => (state: GeomapState) => state.geomap.value;
 
 export default geomapSlice.reducer;
