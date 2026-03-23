@@ -24,8 +24,6 @@ export default function MenuButton({ config }: { config: MenuConfig }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [storeInitialized, setStoreInitialized] = useState(false);
 
-  console.log(storeInitialized)
-
   const open = Boolean(anchorEl);
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
