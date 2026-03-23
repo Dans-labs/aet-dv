@@ -69,7 +69,9 @@ export const dansFormatsApi = createApi({
         url: `type-list-simple`,
         headers: { Accept: "application/json" },
       }),
+      keepUnusedDataFor: 99999,
       transformResponse: (response: DansSimpleList) => {
+        console.log('transformResponse called', response);
         return response.list;
       },
     }),

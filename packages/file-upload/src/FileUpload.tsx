@@ -64,7 +64,8 @@ const FileUpload = () => {
   const { useAppDispatch, useAppSelector } = useStoreHooks<FilesState>();
   const dispatch = useAppDispatch();
   const currentFiles = useAppSelector(getFiles);
-  const { data } = useFetchSimpleListQuery(null);
+  const { data, isLoading, isSuccess } = useFetchSimpleListQuery(undefined);
+  console.log({ data, isLoading, isSuccess });
 
   // Validate added files, needs to be synchronous, so no API calls possible here
   const fileValidator = (file: File) => {
@@ -175,6 +176,8 @@ const FileUpload = () => {
       validator: fileValidator,
     });
 
+  console.log(data)
+
   return (
     <>
       <Box
@@ -187,7 +190,7 @@ const FileUpload = () => {
         p={3}
         {...getRootProps({ className: "dropzone" })}
       >
-        {data ?
+        {data && data.length > 0 ?
           <>
             <input {...getInputProps()} />
             <Typography

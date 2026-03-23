@@ -12,6 +12,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import ReplayCircleFilledIcon from "@mui/icons-material/ReplayCircleFilled";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import InfoIcon from "@mui/icons-material/Info";
 import Tooltip from "@mui/material/Tooltip";
 import { getFiles, removeFile, setFileMeta } from "./slice";
 import { fileProcessing, fileRoles } from "./utils/fileOptions";
@@ -143,12 +144,22 @@ const FileTableRow = ({ file }: {file: SelectedFile}) => {
         <TableCell sx={{ py: 2, pl: 1, pr: 0 }}>
           {/* Actions/info: delete, retry, done, etc. */}
 
-          {(file.status === "submitting" || file.status === "queued" || file.status === "finalising") && (
+          {(file.status === "submitting" || file.status === "queued" || file.status === "finalising" || file.status === "processing") && (
             <CircularProgress size={20} sx={{p: 0.6}} />
           )}
           {file.status === "success" && (
             <Tooltip title="Uploaded successfully">
               <CheckCircleIcon color="success" />
+            </Tooltip>
+          )}
+          {file.status === "processed" && (
+            <Tooltip title="Transcript needs checking">
+              <InfoIcon color="warning" />
+            </Tooltip>
+          )}
+          {file.status === "transcriptChecked" && (
+            <Tooltip title="Ready to submit to Dataverse">
+              <InfoIcon color="info" />
             </Tooltip>
           )}
           {file.status === "error" && (
@@ -258,6 +269,7 @@ const UploadProgress = ({ file, hasProcessingOptions }: { file: SelectedFile, ha
               {(file.status === 'success' 
               || file.status === 'processing'
               || file.status === 'processed'
+              || file?.status === "transcriptChecked"
               ) && `Upload complete`}
               {file.status === 'queued' && `Waiting to upload`}
             </Typography>
@@ -266,7 +278,7 @@ const UploadProgress = ({ file, hasProcessingOptions }: { file: SelectedFile, ha
               variant="determinate"
               value={file?.progress || 0}
               color={
-                file?.status === "success" 
+                file?.status === "success" || file?.status === "processed" || file?.status === "transcriptChecked"
                 ? "success"
                 : file?.status === "error" 
                 ? "error"
@@ -285,8 +297,8 @@ const UploadProgress = ({ file, hasProcessingOptions }: { file: SelectedFile, ha
             <LinearProgress
               sx={{ width: "100%", borderRadius: 1 }}
               variant={file.status === "processing" ? "indeterminate" : "determinate"}
-              value={file.status === 'processed' ? 100 : 0}
-              color="secondary"
+              value={file.status === 'processed' || file?.status === "transcriptChecked" || file?.status === "success" ? 100 : 0}
+              color={file?.status === "processed" || file?.status === "transcriptChecked" || file?.status === "success" ? "success" : "secondary"}
             />              
           </Stack>
         ))}

@@ -16,6 +16,8 @@ export const DynamicStoreProvider: FC<DynamicStoreProviderProps> = ({
 }) => {
   const [store, setStore] = useState<AppStore | null>(null);
 
+  console.log('DynamicStoreProvider rendered with menuItems:', menuItems);
+
   useEffect(() => {
     createDynamicStore(menuItems).then(setStore);
   }, [menuItems]);

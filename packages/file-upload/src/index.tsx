@@ -25,6 +25,17 @@ export default function Files() {
   const [ submitData, { isLoading: submitLoading } ] = useSubmitDataMutation();
   const { apiToken, doi } = useApiToken();
 
+  const status = selectedFiles.map(file => file.status);
+  const buttonProps = status.indexOf(undefined) > -1 
+    ? { disabled: false, title: "Upload" }
+    : status.indexOf("error") > -1
+    ? { disabled: false, title: "Retry failed uploads" }
+    : status.indexOf("queued") > -1 || status.indexOf("submitting") > -1 || status.indexOf("processing") > -1
+    ? { disabled: true, title: "Uploading and processing files" }
+    : { disabled: true, title: "All files uploaded successfully" };
+
+  console.log(buttonProps)
+
   return (
     <BoxWrap width={50}>
       <TabHeader
@@ -71,7 +82,6 @@ function FileUploader() {
     if (currentlyUploading.length < maxConcurrentUploads) {
       // add first file of selectedFiles that is not currently uploading to the active uploads
       selectedFiles.find((file) => {
-        console.log(file)
         // only call the upload function if file is queued
         // return file?.status === "queued" && apiToken && doi && uploadFile(file, dispatch, apiToken, doi);
         return file?.status === "queued" && simulateUploadFile(file, dispatch);

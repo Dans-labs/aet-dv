@@ -1,4 +1,4 @@
-import { useState, type MouseEvent } from 'react';
+import { useMemo, useState, type MouseEvent } from 'react';
 import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import Menu from '@mui/material/Menu';
@@ -24,6 +24,8 @@ export default function MenuButton({ config }: { config: MenuConfig }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [storeInitialized, setStoreInitialized] = useState(false);
 
+  console.log(storeInitialized)
+
   const open = Boolean(anchorEl);
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -37,7 +39,10 @@ export default function MenuButton({ config }: { config: MenuConfig }) {
     setStoreInitialized(true); // Initialize store on first drawer open
   };
 
-  const menuItems = getMenuItems(config).filter(item => item.isEnabled);
+  const menuItems = useMemo(
+    () => getMenuItems(config).filter(item => item.isEnabled),
+    [config]
+  );
 
   return (
     <Box

@@ -46,10 +46,32 @@ export const AudioProcessing = ({
 
   return (
     <Stack direction="row" spacing={2} alignItems="center" justifyContent="flex-end" p={2} sx={{ borderBottom: last ? 'none' : '1px solid #e0e0e0' }}>
-      {file.status === 'processed' ?
-        <Button variant="contained" onClick={() => setEditorOpen(true)}>
-          Open transcript editor
-        </Button> :
+      {file.status === 'processed' || file.status === 'transcriptChecked' || file.status === "success" ?
+        <>
+          <Button variant="contained" onClick={() => {
+            setEditorOpen(true);
+            dispatch(setFileMeta({
+              name: file.name,
+              type: "status",
+              value: "transcriptChecked",
+            }))
+          }}>
+            Open transcript editor
+          </Button>
+          <Button 
+            variant="contained" 
+            onClick={() => {
+              dispatch(setFileMeta({
+                name: file.name,
+                type: "status",
+                value: "success",
+              }))
+            }}
+            disabled={file.status !== "transcriptChecked"}
+          >
+            Submit to Dataverse
+          </Button>
+        </> :
         <>
           <Stack direction="row" alignItems="center" spacing={1}>
             <SubtitlesIcon sx={{ color: 'rgba(0, 0, 0, 0.54)' }} />
@@ -165,7 +187,6 @@ export function ThumbnailProcessing({ file, last }: { file: SelectedFile, last: 
   const { useAppDispatch } = useStoreHooks<{ files: FilesState }>();
   const dispatch = useAppDispatch();
   const disabled = isDisabled(file);
-  console.log(file)
 
   return (
     <Stack direction="row" spacing={2} alignItems="center" justifyContent="flex-end" p={2} sx={{ borderBottom: last ? 'none' : '1px solid #e0e0e0' }}>
