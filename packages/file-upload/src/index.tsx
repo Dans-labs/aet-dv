@@ -25,17 +25,6 @@ export default function Files() {
   const [ submitData, { isLoading: submitLoading } ] = useSubmitDataMutation();
   const { apiToken, doi } = useApiToken();
 
-  const status = selectedFiles.map(file => file.status);
-  const buttonProps = status.indexOf(undefined) > -1 
-    ? { disabled: false, title: "Upload" }
-    : status.indexOf("error") > -1
-    ? { disabled: false, title: "Retry failed uploads" }
-    : status.indexOf("queued") > -1 || status.indexOf("submitting") > -1 || status.indexOf("processing") > -1
-    ? { disabled: true, title: "Uploading and processing files" }
-    : { disabled: true, title: "All files uploaded successfully" };
-
-  console.log(buttonProps)
-
   return (
     <BoxWrap width={50}>
       <TabHeader

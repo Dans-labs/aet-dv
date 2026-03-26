@@ -18,6 +18,8 @@ import { useState } from "react";
 import TranscriptEditor from "./TranscriptEditor";
 import { useStoreHooks } from '@dans-dv/shared-store';
 import type { FilesState } from "./slice";
+import { useSubmitTranscriptionMutation } from "./api/acpAction";
+import { useApiToken } from "@dans-dv/wrapper";
 
 const supportedLanguages = [
   { name: 'Dutch', id: 'nl' },
@@ -43,6 +45,8 @@ export const AudioProcessing = ({
   const dispatch = useAppDispatch();
   const disabled = isDisabled(file);
   const [ editorOpen, setEditorOpen ] = useState(false);
+  const [ submit, { isLoading: submitting, isError: submitError } ] = useSubmitTranscriptionMutation();
+  const { apiToken, doi } = useApiToken();
 
   return (
     <Stack direction="row" spacing={2} alignItems="center" justifyContent="flex-end" p={2} sx={{ borderBottom: last ? 'none' : '1px solid #e0e0e0' }}>
@@ -61,15 +65,35 @@ export const AudioProcessing = ({
           <Button 
             variant="contained" 
             onClick={() => {
-              dispatch(setFileMeta({
-                name: file.name,
-                type: "status",
-                value: "success",
-              }))
+              submit({
+                apiToken,
+                id: doi,
+                fileName: file.name,
+              }).then((res) => {
+                console.log(res)
+                if (!res.error) {
+                  dispatch(setFileMeta({
+                    name: file.name,
+                    type: "status",
+                    value: "success",
+                  }))
+                } else {
+                  console.log("Error submitting transcription:", res.error);
+                }
+              });
             }}
             disabled={file.status !== "transcriptChecked"}
+            color={submitError ? "warning" : "primary"}
           >
-            Submit to Dataverse
+            {
+              submitting ? 
+              "Submitting..." : 
+              submitError ?
+              "Error: submit again" :
+              file.status !== "transcriptChecked" ?
+              "Submitten successfully" :
+              "Submit to Dataverse"
+            }
           </Button>
         </> :
         <>
@@ -177,7 +201,7 @@ export const AudioProcessing = ({
           }
         </>
       }
-      <TranscriptEditor editorOpen={editorOpen} setEditorOpen={setEditorOpen} file={file} />
+      {editorOpen && <TranscriptEditor editorOpen={editorOpen} setEditorOpen={setEditorOpen} file={file} />}
     </Stack>
   );
 }

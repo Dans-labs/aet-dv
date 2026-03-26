@@ -19,22 +19,8 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CloseIcon from '@mui/icons-material/Close';
 import { motion } from 'motion/react';
 import { useDebounce } from "use-debounce";
-
-type Segment = {
-  speaker: Speaker | string;
-  start: number;
-  end: number;
-  text: string;
-}
-
-type Speaker = { 
-  id: string; 
-  name: string 
-};
-
-type Transcript = {
-  segments?: Segment[];
-};
+import { useGetTranscriptionQuery, useSaveTranscriptionMutation, type Transcript, type Segment, type Speaker } from './api/acpAction';
+import { useApiToken } from "@dans-dv/wrapper";
 
 function Editor({ 
     editorOpen, 
@@ -50,6 +36,26 @@ function Editor({
   const [ currentTime, setCurrentTime ] = useState<number>(0);
   const [ seekTime, setSeekTime ] = useState<number | undefined>(undefined);
   const [ isPlaying, setIsPlaying ] = useState<boolean>(false);
+  const { apiToken, doi } = useApiToken();
+  const { data, isLoading, isError } = useGetTranscriptionQuery({ 
+    apiToken: apiToken, 
+    id: doi, file: file.name, 
+    diarisation: file.audioProcessing?.diarisation ?? false
+  }, {
+    refetchOnMountOrArgChange: true,
+  });
+  const [ saveTranscription ] = useSaveTranscriptionMutation();
+
+  // Auto-save transcript changes when transcript or speakers change
+  useEffect(() => {
+    console.log("Saving transcript/speakers:", transcript);
+    saveTranscription({
+      data: transcript,
+      apiToken,
+      id: doi,
+      fileName: file.name,
+    });
+  }, [transcript, speakers]);
 
   const updateSegment = useCallback((index: number, patch: Partial<Segment>) => {
     setTranscript(prev => {
@@ -115,41 +121,11 @@ function Editor({
 
   const segments = transcript.segments ?? [];
 
-  // on load, fetch transcript data (basic for now)
+  // set local state from API response on load
   useEffect(() => {
-    const fetchTranscript = async () => {
-      const response = await fetch(`${file.audioProcessing?.transcriptUrl}`);
-      const data: Transcript = await response.json();
-
-      const rawSegments = data.segments ?? [];
-
-      // extract raw names from transcript
-      const uniqueNames = [...new Set(
-        rawSegments.map(s => typeof s.speaker === "string" ? s.speaker : s.speaker?.name)
-      )];
-
-      // build your speaker list
-      const speakerList: Speaker[] = uniqueNames.map(n => ({
-        id: n,
-        name: n,
-      }));
-
-      // normalize segments to use real Speaker objects
-      const speakersByName = new Map(speakerList.map(s => [s.name, s]));
-
-      const normalizedSegments: Segment[] = rawSegments.map(s => ({
-        ...s,
-        speaker:
-          typeof s.speaker === "string"
-            ? speakersByName.get(s.speaker)!
-            : speakersByName.get(s.speaker.name)!,
-      }));
-      setSpeakers(speakerList);
-      setTranscript({ segments: normalizedSegments });
-    };
-
-  fetchTranscript();
-}, [file.audioProcessing?.transcriptUrl]);
+    setSpeakers(data?.speakers ?? [] );
+    setTranscript({ segments: data?.segments ?? [] });
+  }, [data]);
 
   return (
     <Dialog onClose={() => setEditorOpen(false)} open={editorOpen} maxWidth="xl">
@@ -165,52 +141,63 @@ function Editor({
       >
         <CloseIcon />
       </IconButton>
-      <DialogTitle>Edit transcript for {file.name}</DialogTitle>
+      <DialogTitle>Edit transcript: {file.name}</DialogTitle>
       <DialogContent>
         <Grid container spacing={4}>
-          <Grid size={8}>
-            <Box sx={{ height: '80vh', overflowY: 'scroll'}}>
-            {segments.map((s, i) => {
-              const isActive = currentTime >= s.start && currentTime <= s.end;
-              // Ensure speaker is always a Speaker object
-              const speakerObj = typeof s.speaker === "string"
-                ? speakers.find(sp => sp.name === s.speaker) ?? { id: s.speaker, name: s.speaker }
-                : s.speaker;
-              return (
-                <Segment
-                  key={i}
-                  index={i}
-                  speaker={speakerObj}
-                  start={s.start}
-                  end={s.end}
-                  text={s.text}
-                  speakers={speakers}
-                  isActive={isActive}
-                  isPlaying={isPlaying}
-                  update={updateSegment}
-                  remove={deleteSegment}
-                  addAfter={insertSegmentAfter}
-                  setIsPlaying={setIsPlaying}
-                  setSeekTime={setSeekTime}
-                />
-              );
-            })}
-            </Box>
+          <Grid size={12}>
+            {isLoading ? (
+              <Typography>Loading transcript...</Typography>
+            ) : isError ? (
+              <Typography color="error">Error loading transcript</Typography>
+            ) : (
+              <Typography variant="body2">Make adjustments to the transcript segments below. Changes are automatically saved.</Typography>
+            )}
           </Grid>
-            <Grid size={4}>
-              {file.audioProcessing?.fileUrl && transcript.segments && transcript.segments?.length > 0 &&
-                <MediaPlayer 
-                  src={file.audioProcessing?.fileUrl}
-                  onTimeUpdate={(time) => setCurrentTime(time)}
-                  seekTo={seekTime}
-                  setIsPlaying={setIsPlaying}
-                  isPlaying={isPlaying}
-                />
-              }
-              {transcript.segments?.[0].speaker &&
-                <SpeakerEditor speakers={speakers} setSpeakers={setSpeakers} transcript={transcript} />
-              }
+          {transcript && transcript.segments && transcript.segments.length > 0 &&
+            <Grid size={8}>
+              <Box sx={{ height: '80vh', overflowY: 'scroll'}}>
+              {segments.map((s, i) => {
+                const isActive = currentTime >= s.start && currentTime <= s.end;
+                // Ensure speaker is always a Speaker object
+                const speakerObj = typeof s.speaker === "string"
+                  ? speakers.find(sp => sp.name === s.speaker) ?? { id: s.speaker, name: s.speaker }
+                  : s.speaker;
+                return (
+                  <Segment
+                    key={i}
+                    index={i}
+                    speaker={speakerObj}
+                    start={s.start}
+                    end={s.end}
+                    text={s.text}
+                    speakers={speakers}
+                    isActive={isActive}
+                    isPlaying={isPlaying}
+                    update={updateSegment}
+                    remove={deleteSegment}
+                    addAfter={insertSegmentAfter}
+                    setIsPlaying={setIsPlaying}
+                    setSeekTime={setSeekTime}
+                  />
+                );
+              })}
+              </Box>
             </Grid>
+          }
+          <Grid size={4}>
+            {data?.fileLocation && transcript.segments && transcript.segments?.length > 0 &&
+              <MediaPlayer 
+                src={data?.fileLocation}
+                onTimeUpdate={(time) => setCurrentTime(time)}
+                seekTo={seekTime}
+                setIsPlaying={setIsPlaying}
+                isPlaying={isPlaying}
+              />
+            }
+            {transcript.segments?.[0]?.speaker &&
+              <SpeakerEditor speakers={speakers} setSpeakers={setSpeakers} transcript={transcript} />
+            }
+          </Grid>
         </Grid>
       </DialogContent>
     </Dialog>
@@ -251,14 +238,13 @@ const Segment = memo(function Segment({
   const [localText, setLocalText] = useState(text);
   const wasActive = useRef(false);
 
-  // update only when leaving blur instead of every keystroke
-  useEffect(() => setLocalText(text), [text]);
-
-  const onBlurText = () => {
-    if (localText !== text) {
-      update(index, { text: localText });
+  // update on every change, debounced
+  const [debouncedText] = useDebounce(localText, 500);
+  useEffect(() => {
+    if (debouncedText !== text) {
+      update(index, { text: debouncedText });
     }
-  };
+  }, [debouncedText]);
 
   // scroll only when first becoming active
   useEffect(() => {
@@ -300,26 +286,28 @@ const Segment = memo(function Segment({
           />
         </Grid>
 
-        <Grid size={3}>
-          <FormControl fullWidth>
-            <InputLabel>Speaker</InputLabel>
-            <Select
-              value={speaker.id}
-              label="Speaker"
-              size="small"
-              onChange={e => {
-                const selectedSpeaker = speakers.find(s => s.id === e.target.value);
-                if (selectedSpeaker) {
-                  update(index, { speaker: selectedSpeaker });
-                }
-              }}
-            >
-              {speakers.map(s => (
-                <MenuItem key={s.id} value={s.id}>{s.name}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
+        {speakers.length > 0 &&
+          <Grid size={3}>
+            <FormControl fullWidth>
+              <InputLabel>Speaker</InputLabel>
+              <Select
+                value={speaker.id}
+                label="Speaker"
+                size="small"
+                onChange={e => {
+                  const selectedSpeaker = speakers.find(s => s.id === e.target.value);
+                  if (selectedSpeaker) {
+                    update(index, { speaker: selectedSpeaker });
+                  }
+                }}
+              >
+                {speakers.map(s => (
+                  <MenuItem key={s.id} value={s.id}>{s.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+        }
 
         <Grid size={3}>
           <Stack direction="row" spacing={1}>
@@ -342,7 +330,7 @@ const Segment = memo(function Segment({
           </Stack>
         </Grid>
 
-        <Grid size={4}>
+        <Grid size={speakers.length > 0 ? 4 : 7}>
           <TextField
             label="Text"
             multiline
@@ -350,7 +338,6 @@ const Segment = memo(function Segment({
             size="small"
             value={localText}
             onChange={e => setLocalText(e.target.value)}
-            onBlur={onBlurText}
           />
         </Grid>
 
@@ -368,8 +355,8 @@ const Segment = memo(function Segment({
     </Box>
   );
 }, (p, n) =>
-  p.speaker.id === n.speaker.id &&
-  p.speaker.name === n.speaker.name &&
+  p.speaker?.id === n.speaker?.id &&
+  p.speaker?.name === n.speaker?.name &&
   p.start === n.start &&
   p.end === n.end &&
   p.text === n.text &&

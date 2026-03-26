@@ -26,7 +26,7 @@ export const filesSlice = createSlice({
     queueFiles: (state) => {
       // set all files to queued if not already successfully uploaded
       state.forEach((file: SelectedFile) => {
-        if (file.status !== "success") {
+        if (file.status === undefined || file.status === "error") {
           file.status = "queued";
           file.progress = 0;
         }

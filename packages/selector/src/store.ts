@@ -33,7 +33,7 @@ const featureConfig: Record<string, FeatureConfig> = {
     module: () => import("@dans-dv/file-upload"),
     exports: {
       reducer: "fileReducer",
-      apis: ["dansFormatsApi"]
+      apis: ["dansFormatsApi", "acpActionApi"]
     },
     reducerKey: "files"
   },

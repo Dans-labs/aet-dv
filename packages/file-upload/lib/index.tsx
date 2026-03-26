@@ -1,3 +1,4 @@
 export { default as FileUpload } from '../src';
 export { dansFormatsApi, type DansFilesResponse } from '../src/api/dansFormats';
+export { acpActionApi } from '../src/api/acpAction';
 export { default as fileReducer } from '../src/slice';

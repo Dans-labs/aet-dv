@@ -64,8 +64,7 @@ const FileUpload = () => {
   const { useAppDispatch, useAppSelector } = useStoreHooks<FilesState>();
   const dispatch = useAppDispatch();
   const currentFiles = useAppSelector(getFiles);
-  const { data, isLoading, isSuccess } = useFetchSimpleListQuery(undefined);
-  console.log({ data, isLoading, isSuccess });
+  const { data, isError } = useFetchSimpleListQuery(undefined);
 
   // Validate added files, needs to be synchronous, so no API calls possible here
   const fileValidator = (file: File) => {
@@ -176,8 +175,6 @@ const FileUpload = () => {
       validator: fileValidator,
     });
 
-  console.log(data)
-
   return (
     <>
       <Box
@@ -204,7 +201,7 @@ const FileUpload = () => {
             color="neutral.contrastText"
             sx={{ textAlign: "center", cursor: "pointer" }}
           >
-            Loading file types...
+            { isError ? "Error loading file types" : "Loading file types..." }
           </Typography>
         }
       </Box>
