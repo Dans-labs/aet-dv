@@ -3,6 +3,6 @@ import { createApp } from '@aet-dv/wrapper'
 
 createApp({
   app: <App />,
-  appendToId: 'actionButtonBlock',
+  appendToId: '#datasetForm #actionButtonBlock',
   requireChildId: process.env.NODE_ENV !== 'development' ? 'editDataSet' : undefined,
 })

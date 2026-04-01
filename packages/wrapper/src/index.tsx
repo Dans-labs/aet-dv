@@ -21,7 +21,7 @@ export function createApp({
   theme?: Partial<Theme>;
   requireChildId?: string;
 }) {
-  const targetElement = document.querySelector(`#${appendToId}`);
+  const targetElement = document.querySelector(appendToId);
 
   // If requireChildId is specified, check if that element exists within targetElement
   if (requireChildId) {

@@ -7,9 +7,14 @@ export type OptionsType = {
   value: string;
 };
 
+export type GeonamesOption = OptionsType & {
+  coordinates?: [number, number]
+  id?: string
+}
+
 export type MapFeatureType = Point | Polygon | LineString;
 export interface ExtendedMapFeature<G extends Geometry = Geometry, P = any> extends Feature<G, P> {
-  geonames?: OptionsType | undefined;
+  geonames?: GeonamesOption;
   originalCoordinates?: number[] | number[][] | number[][][];
   coordinateSystem?: CoordinateSystem;
 };

@@ -2,9 +2,10 @@
 import { useApiToken } from "@aet-dv/wrapper";
 import { TabHeader, BoxWrap } from "@aet-dv/layout";
 import DrawMap from "./Map";
-import { Submit, useSubmitDataMutation } from "@aet-dv/submit";
+import { Submit, useSubmitDirectDataMutation } from "@aet-dv/submit";
 import { getFeatures, setFeatures, type GeomapState, type ExtendedMapFeature } from "./slice";
 import { useStoreHooks } from '@aet-dv/shared-store';
+import { featuresToDvGeospatial, type GeoFeature } from "./helpers";
 
 export type DrawConfig = {
   point?: boolean;
@@ -21,7 +22,7 @@ export default function GeoData({ config }: {
     };
   }
 }) {
-  const [ submitData, { isLoading, isSuccess, isError } ] = useSubmitDataMutation();
+  const [ submitData, { isLoading, isSuccess, isError } ] = useSubmitDirectDataMutation();
   const { apiToken, doi } = useApiToken();
   const { useAppDispatch, useAppSelector } = useStoreHooks<GeomapState>();
   const dispatch = useAppDispatch();
@@ -44,7 +45,7 @@ export default function GeoData({ config }: {
         isLoading={isLoading}
         isError={isError}
         isSuccess={isSuccess}
-        onClick={() => submitData({ data: value, id: doi, apiToken: apiToken })}
+        onClick={() => submitData({ data: featuresToDvGeospatial(value as GeoFeature[]), id: doi, apiToken: apiToken })}
       />
 
     </BoxWrap>
