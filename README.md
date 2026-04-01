@@ -157,3 +157,14 @@ Create a dataset first, and then edit it. You should see the Advanced Edit butto
 
 * The demo uses placeholder API keys for GeoNames and MapTiler. Replace these in `apps/kitchensink/.env` if you need full geo functionality.
 * Data is persisted in `./data/` and survives restarts. To start fresh, run `docker compose down -v`.
+
+### Development mode
+
+A dev compose is available that runs the Vite dev server inside Docker instead of a production build, giving you hot module replacement while developing against a real Dataverse instance.
+```bash
+docker compose -f docker-compose.dev.yml up
+```
+
+This requires port `5173` to be available in addition to `8080`. Your source files are mounted directly into the container, so any changes you make locally will be reflected in the browser immediately.
+
+The same credentials and notes apply as above. Data is shared between the demo and dev compose setups, so if you have already run `docker compose up` you won't need to wait for bootstrapping again.
