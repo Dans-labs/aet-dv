@@ -45,7 +45,7 @@ export default function GeoData({ config }: {
         isLoading={isLoading}
         isError={isError}
         isSuccess={isSuccess}
-        onClick={() => submitData({ data: featuresToDvGeospatial(value as GeoFeature[]), id: doi, apiToken: apiToken })}
+        onClick={() => submitData({ data: featuresToDvGeospatial(value as GeoFeature[]), doi: doi, apiToken: apiToken })}
       />
 
     </BoxWrap>
