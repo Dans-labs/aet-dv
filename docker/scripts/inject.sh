@@ -25,4 +25,20 @@ curl -X PUT \
   -d '/var/www/dataverse/branding/custom-footer.html' \
   "http://dataverse:8080/api/admin/settings/:FooterCustomizationFile?unblock-key=unblockme"
 
+# Download and load geospatial metadata block
+echo "Loading geospatial metadata block..."
+curl -sSf "https://raw.githubusercontent.com/IQSS/dataverse/v6.10.1/scripts/api/data/metadatablocks/geospatial.tsv" -o /tmp/geospatial.tsv
+curl -X POST \
+  -H "Content-type: text/tab-separated-values" \
+  "http://dataverse:8080/api/admin/datasetfield/load?unblock-key=unblockme" \
+  --upload-file /tmp/geospatial.tsv
+
+# Enable metadata blocks on root collection
+echo "Enabling metadata blocks on root collection..."
+curl -X POST \
+  -H "X-Dataverse-key: unblockme" \
+  -H "Content-type: application/json" \
+  "http://dataverse:8080/api/dataverses/root/metadatablocks?unblock-key=unblockme" \
+  -d '["citation","geospatial"]'
+
 echo "Plugin injected successfully!"
