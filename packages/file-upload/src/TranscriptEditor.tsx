@@ -20,7 +20,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { motion } from 'motion/react';
 import { useDebounce } from "use-debounce";
 import { useGetTranscriptionQuery, useSaveTranscriptionMutation, type Transcript, type Segment, type Speaker } from './api/acpAction';
-import { useApiToken } from "@dans-dv/wrapper";
+import { useApiToken } from "@aet-dv/wrapper";
 
 function Editor({ 
     editorOpen, 
@@ -43,6 +43,7 @@ function Editor({
     diarisation: file.audioProcessing?.diarisation ?? false
   }, {
     refetchOnMountOrArgChange: true,
+    skip: !editorOpen, 
   });
   const [ saveTranscription ] = useSaveTranscriptionMutation();
 

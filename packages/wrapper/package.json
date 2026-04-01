@@ -1,5 +1,5 @@
 {
-    "name": "@dans-dv/wrapper",
+    "name": "@aet-dv/wrapper",
     "main": "lib/index.tsx",
     "version": "1.0.0",
     "type": "module",

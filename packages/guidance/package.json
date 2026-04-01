@@ -1,5 +1,5 @@
 {
-  "name": "@dans-dv/guidance",
+  "name": "@aet-dv/guidance",
   "main": "lib/index.tsx",
   "version": "1.0.0",
   "type": "module",

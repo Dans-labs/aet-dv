@@ -25,7 +25,7 @@ import type { SelectedFile, FileActions } from "./FileUpload";
 import { findFileGroup, isDisabled } from "./utils/fileHelpers";
 import Typography from "@mui/material/Typography";
 import { AudioProcessing, ThumbnailProcessing } from "./FileProcessing";
-import { useStoreHooks } from '@dans-dv/shared-store';
+import { useStoreHooks } from '@aet-dv/shared-store';
 import type { FilesState } from "./slice";
 
 const FileTable = () => {

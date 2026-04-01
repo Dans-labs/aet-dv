@@ -9,17 +9,19 @@
     "test": "turbo test",
     "lint": "turbo lint",
     "format": "prettier --experimental-ternaries --write \"**/*.{ts,tsx,md}\"",
-    "dev:eosc": "turbo dev --filter=@dans-dv/eosc",
-    "build:eosc": "turbo build --filter=@dans-dv/eosc",
-    "dev:ssh": "turbo dev --filter=@dans-dv/ssh",
-    "build:ssh": "turbo build --filter=@dans-dv/ssh"
+    "dev:eosc": "turbo dev --filter=@aet-dv/eosc",
+    "build:eosc": "turbo build --filter=@aet-dv/eosc",
+    "dev:ssh": "turbo dev --filter=@aet-dv/ssh",
+    "build:ssh": "turbo build --filter=@aet-dv/ssh",
+    "dev:kitchensink": "turbo dev --filter=@aet-dv/kitchensink",
+    "build:kitchensink": "turbo build --filter=@aet-dv/kitchensink"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@dans-dv/eslint-config": "workspace:*",
-    "@dans-dv/typescript-config": "workspace:*",
+    "@aet-dv/eslint-config": "workspace:*",
+    "@aet-dv/typescript-config": "workspace:*",
     "@types/node": "^22.15.17",
     "turbo": "^2.5.3",
     "typescript": "^5.8.3"

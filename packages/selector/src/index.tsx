@@ -16,7 +16,7 @@ import Tooltip from '@mui/material/Tooltip';
 import CloseIcon from '@mui/icons-material/Close';
 import Divider from '@mui/material/Divider';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { StoreHooksProvider } from '@dans-dv/shared-store';
+import { StoreHooksProvider } from '@aet-dv/shared-store';
 import { DynamicStoreProvider } from './DynamicStoreProvider';
 
 export default function MenuButton({ config }: { config: MenuConfig }) {

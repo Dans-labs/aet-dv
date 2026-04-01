@@ -17,8 +17,8 @@ function App() {
         map: {
           draw: {
             point: true,
-            line: false,
-            polygon: false,
+            line: true,
+            polygon: true,
             rectangle: true,
           },
         },

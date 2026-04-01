@@ -7,16 +7,16 @@ import { CircularProgress } from '@mui/material';
 
 // Lazy load the heavy components
 const SoftwareHeritageForm = lazy(() => 
-  import('@dans-dv/swh-registration').then(m => ({ default: m.SoftwareHeritageForm }))
+  import('@aet-dv/swh-registration').then(m => ({ default: m.SoftwareHeritageForm }))
 );
 const Keywords = lazy(() => 
-  import('@dans-dv/keywords').then(m => ({ default: m.Keywords }))
+  import('@aet-dv/keywords').then(m => ({ default: m.Keywords }))
 );
 const FileUpload = lazy(() => 
-  import('@dans-dv/file-upload').then(m => ({ default: m.FileUpload }))
+  import('@aet-dv/file-upload').then(m => ({ default: m.FileUpload }))
 );
 const GeoData = lazy(() => 
-  import('@dans-dv/geomap').then(m => ({ default: m.GeoData }))
+  import('@aet-dv/geomap').then(m => ({ default: m.GeoData }))
 );
 
 export type MenuKey = 'swh' | 'fileUpload' | 'keywords' | 'geo';

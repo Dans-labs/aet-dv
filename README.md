@@ -27,7 +27,7 @@ Setting up an app for a Dataverse instance needs minimal configuration.
 The `Selector` component is configured with multiple feature flags that enable various data selection and input capabilities.
 
 ```tsx
-import { Selector } from '@dans-dv/selector'
+import { Selector } from '@aet-dv/selector'
 
 function App() {
   return (
@@ -93,13 +93,13 @@ The `map.draw` object controls which drawing tools are available on the map:
 
 ## Application Wrapper Configuration
 
-The application is initialized using the `@dans-dv/wrapper` package, which handles mounting and environment-specific behavior.
+The application is initialized using the `@aet-dv/wrapper` package, which handles mounting and environment-specific behavior.
 
 ### Implementation
 
 ```javascript
 import App from './App'
-import { createApp } from '@dans-dv/wrapper'
+import { createApp } from '@aet-dv/wrapper'
 
 createApp({
   app: <App />,
@@ -126,3 +126,34 @@ The `requireChildId` configuration is optional, and creates different behaviors 
 ## Build and deployment
 
 This app features a Github Action which builds and deploys a toolkit application. It can be adapted for different environments and be used for different toolkit configurations/apps.
+
+## Running the demo
+
+A full-featured demo environment is available via Docker, bundling a complete Dataverse instance with the kitchensink app (all features enabled) pre-injected.
+
+### Prerequisites
+
+* [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed on your system
+* Ports `8080` and `9001` available on your machine
+
+### Usage
+```bash
+docker compose up
+```
+
+This will:
+1. Build the kitchensink app
+2. Start a fully configured Dataverse instance
+3. Inject the plugin into the Dataverse footer automatically
+
+Once everything is up (it may take a few minutes on first run), visit `http://localhost:8080` and log in with:
+
+* **Username:** `dataverseAdmin`
+* **Password:** `admin1`
+
+Create a dataset first, and then edit it. You should see the Advanced Edit button with all features enabled.
+
+### Notes
+
+* The demo uses placeholder API keys for GeoNames and MapTiler. Replace these in `apps/kitchensink/.env` if you need full geo functionality.
+* Data is persisted in `./data/` and survives restarts. To start fresh, run `docker compose down -v`.

@@ -1,5 +1,5 @@
 {
-  "name": "@dans-dv/layout",
+  "name": "@aet-dv/layout",
   "main": "lib/index.tsx",
   "version": "1.0.0",
   "type": "module",

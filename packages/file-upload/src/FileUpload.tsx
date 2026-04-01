@@ -15,7 +15,7 @@ import IconButton from "@mui/material/IconButton";
 import { getFiles, addFiles } from "./slice";
 import { useFetchSimpleListQuery } from "./api/dansFormats";
 import type { FileRejection } from "react-dropzone";
-import { useStoreHooks } from '@dans-dv/shared-store';
+import { useStoreHooks } from '@aet-dv/shared-store';
 import type { FilesState } from "./slice";
 
 const maxFileSize = 1000000 * 1024 * 1024; // 10 GB max 

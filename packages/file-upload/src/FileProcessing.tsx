@@ -16,10 +16,10 @@ import { Box, CircularProgress } from "@mui/material";
 import Button from '@mui/material/Button';
 import { useState } from "react";
 import TranscriptEditor from "./TranscriptEditor";
-import { useStoreHooks } from '@dans-dv/shared-store';
+import { useStoreHooks } from '@aet-dv/shared-store';
 import type { FilesState } from "./slice";
 import { useSubmitTranscriptionMutation } from "./api/acpAction";
-import { useApiToken } from "@dans-dv/wrapper";
+import { useApiToken } from "@aet-dv/wrapper";
 
 const supportedLanguages = [
   { name: 'Dutch', id: 'nl' },

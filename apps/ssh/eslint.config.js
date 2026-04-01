@@ -1,3 +1,3 @@
-import config from '@dans-dv/eslint-config';
+import config from '@aet-dv/eslint-config';
 
 export default [...config];

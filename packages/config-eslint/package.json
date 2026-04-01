@@ -1,5 +1,5 @@
 {
-  "name": "@dans-dv/eslint-config",
+  "name": "@aet-dv/eslint-config",
   "version": "0.0.0",
   "main": "index.js",
   "type": "module",

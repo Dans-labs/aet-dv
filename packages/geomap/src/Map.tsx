@@ -5,7 +5,7 @@ import {
 } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { useInjectGlobalStyle } from '@dans-dv/wrapper';
+import { useInjectGlobalStyle } from '@aet-dv/wrapper';
 import { type CoordinateSystem, type ExtendedMapFeature, type OptionsType } from "./slice";
 import GLMap, {
   ScaleControl,
@@ -22,7 +22,7 @@ import { useDebounce, useDebouncedCallback } from "use-debounce";
 import { DrawControls } from './Draw';
 import type { DrawConfig } from './';
 import { FeatureTable } from './Table';
-import { AutocompleteAPIField } from '@dans-dv/inputs';
+import { AutocompleteAPIField } from '@aet-dv/inputs';
 
 /**
  * Map field

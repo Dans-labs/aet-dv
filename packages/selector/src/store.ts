@@ -1,5 +1,5 @@
 import { configureStore, type ThunkAction, type Action, type Middleware, type Reducer } from "@reduxjs/toolkit";
-import { submitApi, submitDirectApi } from "@dans-dv/submit";
+import { submitApi, submitDirectApi } from "@aet-dv/submit";
 
 export interface FeatureItem {
   key: string;
@@ -22,7 +22,7 @@ interface FeatureConfig {
 
 const featureConfig: Record<string, FeatureConfig> = {
   swh: {
-    module: () => import("@dans-dv/swh-registration"),
+    module: () => import("@aet-dv/swh-registration"),
     exports: {
       reducer: "swhReducer",
       apis: ["codemetaApi"]
@@ -30,7 +30,7 @@ const featureConfig: Record<string, FeatureConfig> = {
     reducerKey: "swh"
   },
   fileUpload: {
-    module: () => import("@dans-dv/file-upload"),
+    module: () => import("@aet-dv/file-upload"),
     exports: {
       reducer: "fileReducer",
       apis: ["dansFormatsApi", "acpActionApi"]
@@ -38,7 +38,7 @@ const featureConfig: Record<string, FeatureConfig> = {
     reducerKey: "files"
   },
   keywords: {
-    module: () => import("@dans-dv/keywords"),
+    module: () => import("@aet-dv/keywords"),
     exports: {
       reducer: "keywordsReducer",
       apis: ["datastationsApi", "wikidataApi", "dataverseApi"]
@@ -46,7 +46,7 @@ const featureConfig: Record<string, FeatureConfig> = {
     reducerKey: "keywords"
   },
   geo: {
-    module: () => import("@dans-dv/geomap"),
+    module: () => import("@aet-dv/geomap"),
     exports: {
       reducer: "geomapReducer",
       apis: ["geonamesApi", "wmsApi", "maptilerApi"]

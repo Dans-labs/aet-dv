@@ -1,6 +1,6 @@
 import SubtitlesIcon from '@mui/icons-material/Subtitles';
 import ImageIcon from '@mui/icons-material/Image';
-import { InfoTooltip } from "@dans-dv/guidance";
+import { InfoTooltip } from "@aet-dv/guidance";
 import Typography from '@mui/material/Typography';
 
 // Defines actions a user can select for file processing and roles

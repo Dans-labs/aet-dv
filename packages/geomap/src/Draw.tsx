@@ -25,7 +25,7 @@ import PentagonIcon from "@mui/icons-material/Pentagon";
 import { useLazyTransformCoordinatesQuery } from "./api/maptiler";
 import DrawRectangle from 'mapbox-gl-draw-rectangle-mode';
 import RectangleIcon from '@mui/icons-material/Rectangle';
-import { useInjectGlobalStyle } from '@dans-dv/wrapper';
+import { useInjectGlobalStyle } from '@aet-dv/wrapper';
 import type { DrawConfig } from './';
 
 type FeaturesEvent = { features: ExtendedMapFeature[]; action?: string };

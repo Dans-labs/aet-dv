@@ -1,5 +1,5 @@
 {
-  "name": "@dans-dv/submit",
+  "name": "@aet-dv/submit",
   "main": "lib/index.tsx",
   "version": "1.0.0",
   "type": "module",
@@ -7,7 +7,7 @@
   "keywords": [],
   "author": "",
   "dependencies": {
-    "@dans-dv/wrapper": "workspace:*",
+    "@aet-dv/wrapper": "workspace:*",
     "@mui/material": "^7.1.0",
     "@reduxjs/toolkit": "^2.8.2",
     "react": "^19.1.0"

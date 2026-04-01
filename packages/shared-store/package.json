@@ -1,5 +1,5 @@
 {
-  "name": "@dans-dv/shared-store",
+  "name": "@aet-dv/shared-store",
   "main": "lib/index.ts",
   "version": "1.0.0",
   "description": "",

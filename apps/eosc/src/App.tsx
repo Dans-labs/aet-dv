@@ -1,4 +1,4 @@
-import { Selector } from '@dans-dv/selector'
+import { Selector } from '@aet-dv/selector'
 
 function App() {
   return (
