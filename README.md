@@ -103,16 +103,16 @@ import { createApp } from '@aet-dv/wrapper'
 
 createApp({
   app: <App />,
-  appendToId: 'actionButtonBlock',
-  requireChildId: process.env.NODE_ENV !== 'development' ? 'editDataSet' : undefined,
+  appendToId: '#datasetForm #actionButtonBlock',
+  requireChildId: process.env.NODE_ENV !== 'development' ? '#editDataSet' : undefined,
 })
 ```
 
 ### Wrapper Options
 
 - **`app`**: `<App />` - The React component to render (the Selector component configured above)
-- **`appendToId`**: `'actionButtonBlock'` - The DOM element ID where the application will be mounted
-- **`requireChildId`**: Conditional rendering, based on environment:
+- **`appendToId`**: `'#actionButtonBlock'` - The DOM element ID (or nested ID) where the application will be mounted
+- **`requireChildId`**: Conditional rendering, based on environment, needed for some Dataverse instances:
   - **Production**: `'editDataSet'` - Requires a child element with this ID to be present before mounting
   - **Development**: `undefined` - No child element requirement, allowing the app to mount freely for easier testing
 
