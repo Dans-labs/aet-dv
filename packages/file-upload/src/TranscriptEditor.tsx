@@ -21,6 +21,7 @@ import { motion } from 'motion/react';
 import { useDebounce } from "use-debounce";
 import { useGetTranscriptionQuery, useSaveTranscriptionMutation, type Transcript, type Segment, type Speaker } from './api/acpAction';
 import { useApiToken } from "@aet-dv/wrapper";
+import { AudioPlayer } from './AudioPlayer';
 
 function Editor({ 
     editorOpen, 
@@ -495,7 +496,7 @@ function MediaPlayer({ src, onTimeUpdate, seekTo, setIsPlaying, isPlaying }: {
     }
   };
 
-  const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(src);
+  const isVideo = /\.(mp4|webm|mov)$/i.test(src);
 
   return ( 
     <Box mb={2}>
@@ -507,16 +508,33 @@ function MediaPlayer({ src, onTimeUpdate, seekTo, setIsPlaying, isPlaying }: {
           onTimeUpdate={handleTimeUpdate}
           onPlay={handlePlay}
           onPause={handlePause}
+          style={{
+            backgroundColor: 'rgba(0,0,0,0.1)',
+            borderRadius: 3,
+            width: '100%',
+          }}
         />
       :
-        <audio
-          ref={mediaRef as React.RefObject<HTMLAudioElement>}
+        <AudioPlayer
           src={src}
-          controls
+          mediaRef={mediaRef as React.RefObject<HTMLAudioElement>}
           onTimeUpdate={handleTimeUpdate}
           onPlay={handlePlay}
           onPause={handlePause}
         />
+        // <audio
+        //   ref={mediaRef as React.RefObject<HTMLAudioElement>}
+        //   src={src}
+        //   controls
+        //   onTimeUpdate={handleTimeUpdate}
+        //   onPlay={handlePlay}
+        //   onPause={handlePause}
+        //   style={{
+        //     borderRadius: 3,
+        //     overflow: 'hidden',
+        //     width: '100%',
+        //   }}
+        // />
       }
     </Box>
   );
