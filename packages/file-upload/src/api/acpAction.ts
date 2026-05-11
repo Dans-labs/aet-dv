@@ -54,7 +54,7 @@ const transformTranscriptResponse = (response: { segments: Segment[] }, diarisat
   }));
 
   // TODO: file location should come from API response, not hardcoded
-  return { segments: normalizedSegments, speakers: speakerList, fileLocation: "/temp_audio_file.m4a" };
+  return { segments: normalizedSegments, speakers: speakerList, fileLocation: `${import.meta.env.VITE_MOCK_BASE_URL}/mock/audio.ogg` };
 };
 
 export const acpActionApi = createApi({
