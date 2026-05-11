@@ -21,7 +21,7 @@ export function AudioPlayer({ src, onTimeUpdate, onPlay, onPause, mediaRef }: Au
 
     const audioCtx = new AudioContext();
     const analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 128;
+    analyser.fftSize = 256;
 
     const source = audioCtx.createMediaElementSource(mediaRef.current);
     source.connect(analyser);
@@ -41,7 +41,6 @@ export function AudioPlayer({ src, onTimeUpdate, onPlay, onPause, mediaRef }: Au
     const H = canvas.height / devicePixelRatio;
     const bins = analyser.frequencyBinCount;
     const data = new Uint8Array(bins);
-    analyser.fftSize = 256; // 128 bins total
     // only draw the lower 50% of bins
     const usefulBins = Math.floor(bins * 0.5);
     analyser.getByteFrequencyData(data);
