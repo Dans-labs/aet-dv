@@ -25,9 +25,9 @@ export function createApp({
 
   // If requireChildId is specified, check if that element exists within targetElement
   if (requireChildId) {
-    const requiredChild = targetElement?.querySelector(`#${requireChildId}`);
+    const requiredChild = targetElement?.querySelector(requireChildId);
     if (!requiredChild) {
-      console.log(`Element #${requireChildId} not found in #${appendToId}, skipping app creation`);
+      console.log(`Element ${requireChildId} not found in ${appendToId}, skipping app creation`);
       return;
     }
   }

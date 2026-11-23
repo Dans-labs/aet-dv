@@ -8,6 +8,7 @@ services:
     volumes:
       - .:/app
       - /app/node_modules  # prevent host node_modules being overwritten
+      - ./docker/mock:/app/apps/kitchensink/public/mock # Serve mock audio file for testing
     ports:
       - "5173:5173"
     command: sh -c "npm install -g pnpm && pnpm i && pnpm dev:kitchensink -- --host"
