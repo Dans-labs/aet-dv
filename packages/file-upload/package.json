@@ -10,7 +10,7 @@
     "@aet-dv/guidance": "workspace:*",
     "@aet-dv/layout": "workspace:*",
     "@aet-dv/shared-store": "workspace:*",
-    "@aet-dv/submit": "workspace:*",
+    "@aet-dv/acp": "workspace:*",
     "@aet-dv/wrapper": "workspace:*",
     "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.1.0",

@@ -2,7 +2,8 @@
 import { useApiToken } from "@aet-dv/wrapper";
 import { TabHeader, BoxWrap } from "@aet-dv/layout";
 import DrawMap from "./Map";
-import { Submit, useSubmitDirectDataMutation } from "@aet-dv/submit";
+import { Submit } from "@aet-dv/inputs";
+import { useSubmitDataMutation } from "@aet-dv/dataverse";
 import { getFeatures, setFeatures, type GeomapState, type ExtendedMapFeature } from "./slice";
 import { useStoreHooks } from '@aet-dv/shared-store';
 import { featuresToDvGeospatial, type GeoFeature } from "./helpers";
@@ -22,7 +23,7 @@ export default function GeoData({ config }: {
     };
   }
 }) {
-  const [ submitData, { isLoading, isSuccess, isError } ] = useSubmitDirectDataMutation();
+  const [ submitData, { isLoading, isSuccess, isError } ] = useSubmitDataMutation();
   const { apiToken, doi } = useApiToken();
   const { useAppDispatch, useAppSelector } = useStoreHooks<GeomapState>();
   const dispatch = useAppDispatch();

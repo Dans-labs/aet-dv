@@ -1,0 +1,15 @@
+{
+  "name": "@aet-dv/dataverse",
+  "main": "lib/index.ts",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.8.2"
+  },
+  "devDependencies": {
+    "react-redux": "^9.2.0"
+  }
+}

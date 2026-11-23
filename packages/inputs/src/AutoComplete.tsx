@@ -22,7 +22,7 @@ type Value = {
   warning?: boolean;
 };
 
-export function AutocompleteAPIField({
+export default function AutocompleteAPIField({
   inputValue,
   setInputValue,
   debouncedInputValue,

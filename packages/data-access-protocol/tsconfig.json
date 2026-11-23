@@ -1,0 +1,3 @@
+{
+    "extends": "@aet-dv/typescript-config/react-library.json"
+}

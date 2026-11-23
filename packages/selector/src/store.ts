@@ -1,5 +1,6 @@
 import { configureStore, type ThunkAction, type Action, type Middleware, type Reducer } from "@reduxjs/toolkit";
-import { submitApi, submitDirectApi } from "@aet-dv/submit";
+import { acpSubmitApi } from "@aet-dv/acp";
+import { dataverseApi } from "@aet-dv/dataverse";
 
 export interface FeatureItem {
   key: string;
@@ -41,7 +42,7 @@ const featureConfig: Record<string, FeatureConfig> = {
     module: () => import("@aet-dv/keywords"),
     exports: {
       reducer: "keywordsReducer",
-      apis: ["datastationsApi", "wikidataApi", "dataverseApi"]
+      apis: ["datastationsApi", "wikidataApi"]
     },
     reducerKey: "keywords"
   },
@@ -52,21 +53,31 @@ const featureConfig: Record<string, FeatureConfig> = {
       apis: ["geonamesApi", "wmsApi", "maptilerApi"]
     },
     reducerKey: "geomap"
-  }
+  },
+  dap: {
+    module: () => import("@aet-dv/data-access-protocol"),
+    exports: {
+      reducer: "dapReducer",
+    },
+    reducerKey: "dap"
+  },
 };
 
 // Function to create store with only enabled features
 export const createDynamicStore = async (items: FeatureItem[]) => {
   const reducers: Record<string, Reducer> = {
-    // set default reducers here, always loaded
-    [submitApi.reducerPath]: submitApi.reducer,
-    [submitDirectApi.reducerPath]: submitDirectApi.reducer,
+    // set default reducers here, always loaded`
+    [dataverseApi.reducerPath]: dataverseApi.reducer,
+    [acpSubmitApi.reducerPath]: acpSubmitApi.reducer,
   };
   const middlewares: Middleware[] = [
     // set default middleware here, always loaded
-    submitApi.middleware,
-    submitDirectApi.middleware,
+    dataverseApi.middleware,
+    acpSubmitApi.middleware,
   ];
+
+  console.log(reducers)
+  console.log(middlewares)
 
   // Get enabled feature keys
   const keys = items.map(item => item.key);

@@ -21,12 +21,12 @@ export const swhSlice = createSlice({
   initialState,
   reducers: {
     setField<K extends keyof SWHFormState>(
-    state: SWHFormState,
-    action: PayloadAction<{ field: K; value: SWHFormState[K] }>
-  ) {
-    const { field, value } = action.payload;
-    state[field] = value;
-  },
+      state: SWHFormState,
+      action: PayloadAction<{ field: K; value: SWHFormState[K] }>
+    ) {
+      const { field, value } = action.payload;
+      state[field] = value;
+    },
     setFieldArray<K extends keyof SWHFormState>(
       state: SWHFormState,
       action: PayloadAction<{

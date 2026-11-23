@@ -1,6 +1,6 @@
 import TextField, { type TextFieldProps } from '@mui/material/TextField';
 
-export function TextFieldInput({ 
+export default function TextFieldInput({ 
     errors,
     ...props
 }: {

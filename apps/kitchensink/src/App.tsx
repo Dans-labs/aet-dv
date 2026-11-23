@@ -23,6 +23,7 @@ function App() {
           },
         },
       },
+      dap: true,
     }} />
   )
 }

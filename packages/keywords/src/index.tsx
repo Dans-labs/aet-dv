@@ -9,12 +9,13 @@ import { AutocompleteAPIField } from "@aet-dv/inputs";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { TabHeader, SubHeader, BoxWrap } from "@aet-dv/layout";
-import { Submit, useSubmitDirectDataMutation } from "@aet-dv/submit";
+import { Submit } from "@aet-dv/inputs";
 import { useApiToken } from "@aet-dv/wrapper";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { vocabMap, keywordFormatter } from "./helpers";
 import { useStoreHooks } from "@aet-dv/shared-store";
 import type { KeywordState } from "./slice";
+import { useSubmitDataMutation } from "@aet-dv/dataverse";
 
 type DatastationTypes = "elsst" | "narcis" | "dansCollectionsSsh" | "gettyAat";
 
@@ -33,7 +34,7 @@ export function KeywordFields({ config }: {
   const { useAppDispatch, useAppSelector } = useStoreHooks<KeywordState>();
   const dispatch = useAppDispatch();
   const keywords = useAppSelector(getFields());
-  const [ submitDirectData, { isLoading: submitLoading, isSuccess: submitSuccess, isError: submitError, error: submitErrorMessage } ] = useSubmitDirectDataMutation();
+  const [ submitDirectData, { isLoading: submitLoading, isSuccess: submitSuccess, isError: submitError, error: submitErrorMessage } ] = useSubmitDataMutation();
   const { apiToken, doi } = useApiToken();
   const { data: dataverseKeywords, isLoading: isLoadingDataverseKeywords } = useFetchDataverseKeywordsQuery({ doi: doi, apiToken: apiToken });
 

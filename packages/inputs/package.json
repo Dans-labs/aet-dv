@@ -7,9 +7,12 @@
   "keywords": [],
   "author": "",
   "dependencies": {
+    "@aet-dv/layout": "workspace:*",
     "@mui/material": "^7.1.0",
     "@mui/icons-material": "^7.1.0",
-    "react": "^19.1.0"
+    "@reduxjs/toolkit": "^2.8.2",
+    "react": "^19.1.0",
+    "react-hook-form": "^7.56.4"
   },
   "devDependencies": {
     "@types/react": "^19.1.0"

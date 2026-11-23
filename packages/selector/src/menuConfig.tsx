@@ -18,8 +18,11 @@ const FileUpload = lazy(() =>
 const GeoData = lazy(() => 
   import('@aet-dv/geomap').then(m => ({ default: m.GeoData }))
 );
+const DataAccessProtocolForm = lazy(() => 
+  import('@aet-dv/data-access-protocol').then(m => ({ default: m.DataAccessProtocolForm }))
+);
 
-export type MenuKey = 'swh' | 'fileUpload' | 'keywords' | 'geo';
+export type MenuKey = 'swh' | 'fileUpload' | 'keywords' | 'geo' | 'dap';
 export type KeywordsMenuKey = 'wikidata' | 'geonames' | 'elsst' | 'narcis' | 'dansCollectionsSsh' | 'gettyAat';
 
 export type MenuItemConfig = {
@@ -47,6 +50,7 @@ export type MenuConfig = {
       };
     };
   };
+  dap?: boolean;
 };
 
 // Loading fallback component
@@ -100,5 +104,16 @@ export const getMenuItems = (config: MenuConfig): MenuItemConfig[] => [
       </Suspense>
     ) : null,
     icon: <PublicIcon />,
+  },
+  {
+    key: 'dap',
+    label: 'Data Access Protocol',
+    isEnabled: !!config.dap,
+    renderDrawerContent: () => config.dap ? (
+      <Suspense fallback={<LoadingFallback />}>
+        <DataAccessProtocolForm />
+      </Suspense>
+    ) : null,
+    icon: <KeyIcon />,
   },
 ];

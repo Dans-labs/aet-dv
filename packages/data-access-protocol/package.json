@@ -1,5 +1,5 @@
 {
-  "name": "@aet-dv/submit",
+  "name": "@aet-dv/data-access-protocol",
   "main": "lib/index.tsx",
   "version": "1.0.0",
   "type": "module",
@@ -7,10 +7,16 @@
   "keywords": [],
   "author": "",
   "dependencies": {
+    "@aet-dv/dataverse": "workspace:*",
+    "@aet-dv/inputs": "workspace:*",
+    "@aet-dv/layout": "workspace:*",
+    "@aet-dv/shared-store": "workspace:*",
     "@aet-dv/wrapper": "workspace:*",
     "@mui/material": "^7.1.0",
+    "@mui/icons-material": "^7.1.0",
     "@reduxjs/toolkit": "^2.8.2",
-    "react": "^19.1.0"
+    "react": "^19.1.0",
+    "react-hook-form": "^7.56.4"
   },
   "devDependencies": {
     "@types/react": "^19.1.0",
