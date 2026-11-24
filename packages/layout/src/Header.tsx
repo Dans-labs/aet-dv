@@ -10,7 +10,7 @@ export function TabHeader({
   return (
     <>
         <Typography variant="h5" gutterBottom>{title}</Typography>
-        <Typography mb={4}>{subtitle}</Typography>
+        <Typography mb={2}>{subtitle}</Typography>
     </>
   );
 }

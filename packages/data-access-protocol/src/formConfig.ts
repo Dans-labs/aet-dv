@@ -1,9 +1,10 @@
 export type FieldConfig = {
-  type: 'text' | 'date' | 'radio';
+  type: 'text' | 'date' | 'radio' | 'header' | 'textarea';
   label: string;
   required?: boolean;
   options?: { label: string; value: string; toggleTextField?: boolean }[];
   toggleTextFieldLabel?: string;
+  multiline?: boolean;
 };
 
 const YES_NO = [
@@ -15,13 +16,16 @@ const ELABORATE = 'Please elaborate';
 
 const radio = (label: string, options = YES_NO_DEPENDS, toggleTextFieldLabel = ELABORATE): FieldConfig =>
   ({ type: 'radio', label, options, toggleTextFieldLabel, required: true });
-const text = (label: string, required = false): FieldConfig => ({ type: 'text', label, required });
+const text = (label: string, required = false, multiline = false): FieldConfig => ({ type: 'text', label, required, multiline });
+const header = (label: string): FieldConfig => ({ type: 'header', label });
 
 export const dapFields: Record<string, FieldConfig> = {
+  header1: header('General Information'),
   date: { type: 'date', label: 'Date', required: true },
   depositor: text('Name of depositor', true),
   doi: text('DOI of datasets this form applies to', true),
   dataManagementPlanLink: text('Link to data management plan'),
+  header2: header('Information about restrictions for data reuse'),
   dataReuseOtherPurposes: radio('Do you allow data to be used for other purposes than research?'),
   dataReuseStudents: radio('Do you allow students to use your data?'),
   dataReuseTeaching: radio('Do you allow the use of your data for teaching?'),
@@ -36,9 +40,11 @@ export const dapFields: Record<string, FieldConfig> = {
   dataReusePeriod: text('Is there a time period for which this protocol applies?'),
   dataReuseOther: text('Are there other agreements that the requester has to sign to gain access to the data?'),
   dataReuseCosts: radio('Are there costs associated with the use of the data?', YES_NO),
+  header3: header('Information about the processing of access requests'),
   accessRequestsDecision: text('Which individuals or institutes are allowed to decide about the requests? Do you establish a Data Access Committee (DAC) or will one person handle the requests?', true),
   accessRequestsContact: text('Who will be responsible for granting or rejecting access requests?', true),
   accessRequestsAlternativeContact: text('What happens if the person responsible is no longer able to perform this task?', true),
   accessRequestsResponseTime: text('What response time can you guarantee for handling requests?', true),
-  other: text('Room for any additional information'),
+  header4: header('Other information'),
+  other: text('Room for any additional information', false, true),
 };

@@ -8,13 +8,15 @@ import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
 import Radio from '@mui/material/Radio';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Typography from "@mui/material/Typography";
 
 export type FieldConfig = {
-  type: 'text' | 'date' | 'radio';
+  type: 'text' | 'date' | 'radio' | 'header';
   label: string;
   required?: boolean;
   options?: { label: string; value: string; toggleTextField?: boolean }[];
   toggleTextFieldLabel?: string;
+  multiline?: boolean;
 };
 
 type Values = Record<string, string>;
@@ -24,14 +26,15 @@ type Props = {
   subtitle?: string;
   fields: Record<string, FieldConfig>;
   defaultValues?: Values;
+  initialValues?: Values;
   onChange?: (values: Values) => void;   // e.g. sync to redux
   onSubmit: (values: Values) => void;
   submit: React.ComponentProps<typeof Submit>;  // isLoading / isError / isSuccess / error
 };
 
-export default function DynamicForm({ title, subtitle, fields, defaultValues, onChange, onSubmit, submit }: Props) {
+export default function DynamicForm({ title, subtitle, fields, defaultValues, onChange, onSubmit, submit, initialValues }: Props) {
   // shouldUnregister drops "elaborate" answers when their radio option is no longer selected
-  const { control, handleSubmit, watch, formState: { errors, isValid } } =
+  const { control, handleSubmit, watch, getValues, setValue, formState: { errors, isValid } } =
     useForm<Values>({ defaultValues, mode: 'onChange', shouldUnregister: true });
 
   useEffect(() => {
@@ -39,6 +42,13 @@ export default function DynamicForm({ title, subtitle, fields, defaultValues, on
     const sub = watch((v) => onChange(v as Values));
     return () => sub.unsubscribe();
   }, [watch, onChange]);
+
+  useEffect(() => {
+    if (!initialValues) return;
+    Object.entries(initialValues).forEach(([k, v]) => {
+      if (v && !getValues(k)) setValue(k, v, { shouldValidate: true });
+    });
+  }, [initialValues]);
 
   return (
     <BoxWrap>
@@ -57,6 +67,10 @@ function Field({ name, config, control, errors }: { name: string; config: FieldC
   const selected = useWatch({ control, name });
   const showExtra = config.options?.find(o => o.value === selected)?.toggleTextField;
 
+  if (config.type === 'header') {
+    return <Typography variant="h6" sx={{ mt: 1, mb: 1, fontSize: '1.1rem' }}>{config.label}</Typography>;
+  }
+
   if (config.type !== 'radio') {
     return (
       <Controller
@@ -72,6 +86,7 @@ function Field({ name, config, control, errors }: { name: string; config: FieldC
             required={config.required}
             errors={errors[name]}
             {...(config.type === 'date' && { InputLabelProps: { shrink: true } })}
+            {...(config.multiline && { multiline: true })}
           />
         )}
       />
@@ -85,8 +100,8 @@ function Field({ name, config, control, errors }: { name: string; config: FieldC
         control={control}
         rules={{ required: config.required }}
         render={({ field }) => (
-          <FormControl required={config.required} sx={{ mb: 2, display: 'block' }}>
-            <FormLabel>{config.label}</FormLabel>
+          <FormControl required={config.required} sx={{ mb: 1, display: 'block' }}>
+            <FormLabel sx={{ fontSize: '.8rem'}}>{config.label}</FormLabel>
             <RadioGroup row {...field} value={field.value ?? ''}>
               {config.options!.map(o => (
                 <FormControlLabel key={o.value} value={o.value} label={o.label} control={<Radio />} />

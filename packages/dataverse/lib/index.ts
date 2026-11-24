@@ -1,1 +1,7 @@
-export { dataverseApi, useFetchDatasetQuery, useSubmitDataMutation } from "../src";
+export { 
+  dataverseApi, 
+  useFetchDatasetQuery, 
+  useSubmitDataMutation, 
+  useGetUserQuery,
+  useUploadFileMutation
+} from "../src";

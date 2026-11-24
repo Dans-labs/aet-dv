@@ -76,9 +76,6 @@ export const createDynamicStore = async (items: FeatureItem[]) => {
     acpSubmitApi.middleware,
   ];
 
-  console.log(reducers)
-  console.log(middlewares)
-
   // Get enabled feature keys
   const keys = items.map(item => item.key);
 
