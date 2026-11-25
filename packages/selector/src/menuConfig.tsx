@@ -2,6 +2,7 @@ import { type ReactElement, lazy, Suspense } from 'react';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import KeyIcon from '@mui/icons-material/Key';
+import SellIcon from '@mui/icons-material/Sell';
 import PublicIcon from '@mui/icons-material/Public';
 import { CircularProgress } from '@mui/material';
 
@@ -92,7 +93,7 @@ export const getMenuItems = (config: MenuConfig): MenuItemConfig[] => [
         <Keywords config={config.keywords} />
       </Suspense>
     ) : null,
-    icon: <KeyIcon />,
+    icon: <SellIcon />,
   },
   {
     key: 'geo',
