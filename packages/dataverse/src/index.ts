@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { refreshAfterApi } from './refresh';
 
 type FileListing = { data?: { label: string; dataFile: { id: number } }[] };
 
@@ -33,17 +34,7 @@ export const dataverseApi = createApi({
     submitData: build.mutation({
       query: ({ data, apiToken, doi }) => {
         // format headers
-        const headers = {
-          "X-Dataverse-key": apiToken,
-        };
-
-        // log for dev
-        if(!import.meta.env.PROD) {
-          console.log("Submit req headers:");
-          console.log(headers);
-          console.log("Submit metadata:");
-          console.log(data);
-        }
+        const headers = { "X-Dataverse-key": apiToken };
 
         return {
           url: `/api/datasets/:persistentId/editMetadata?persistentId=${doi}&replace=true`,
@@ -52,12 +43,16 @@ export const dataverseApi = createApi({
           body: data,
         };
       },
+      transformResponse: async (response) => {
+        await refreshAfterApi();
+        return response;
+      },
     }),
     uploadFile: build.mutation({
       async queryFn({ file, fileName, fileDescription, doi, apiToken }, _api, _extra, fetchWithBQ) {
         const headers = { 'X-Dataverse-key': apiToken };
 
-        // 1. Look for an existing DAP in the latest version (draft if there is one)
+        // 1. Look for an existing file in the latest version (draft if there is one)
         const listing = await fetchWithBQ({
           url: 'api/datasets/:persistentId/versions/:latest/files',
           params: { persistentId: doi, limit: 1000 },
@@ -73,16 +68,21 @@ export const dataverseApi = createApi({
         
         const result = await fetchWithBQ(
           existing
-            ? { url: `api/files/${existing.dataFile.id}/replace`, method: 'POST', body, headers }
-            : {
-                url: 'api/datasets/:persistentId/add',
-                params: { persistentId: doi },
-                method: 'POST',
-                body,
-                headers,
-              },
+            ? { 
+              url: `api/files/${existing.dataFile.id}/replace`, 
+              method: 'POST', 
+              body, 
+              headers 
+            } : {
+              url: 'api/datasets/:persistentId/add',
+              params: { persistentId: doi },
+              method: 'POST',
+              body,
+              headers,
+            },
         );
 
+        await refreshAfterApi();
         return result.error ? { error: result.error } : { data: result.data };
       },
     }),
