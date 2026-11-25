@@ -16,7 +16,7 @@ async function loadFont(doc: jsPDF, url: string, file: string, name: string, sty
 const MARGIN = 25.4;
 const HEADER_Y = 12.5; 
 
-export async function buildPdf(title: string, fields: Record<string, FieldConfig>, values: Record<string, string>): Blob {
+export async function buildPdf(title: string, fields: Record<string, FieldConfig>, values: Record<string, string>): Promise<Blob> {
   const doc = new jsPDF();
   await Promise.all([
     loadFont(doc, glegooBoldUrl, 'Glegoo-Bold.ttf', 'Glegoo', 'medium'),

@@ -196,7 +196,11 @@ const DrawMap = ({ setValue, value, draw }: {
               border: "1px solid rgba(0,0,0,0.23)",
             }}
             mapStyle={`https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json`}
-            maxBounds={coordinateSystem?.bbox as LngLatBoundsLike}
+            maxBounds={
+              coordinateSystem?.bbox as
+                | [number, number, number, number]
+                | undefined
+            }
           >
             <NavigationControl position="top-left" />
             <ScaleControl />

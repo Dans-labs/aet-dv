@@ -1,5 +1,5 @@
 export type FieldConfig = {
-  type: 'text' | 'date' | 'radio' | 'header' | 'textarea';
+  type: 'text' | 'date' | 'radio' | 'header';
   label: string;
   required?: boolean;
   options?: { label: string; value: string; toggleTextField?: boolean }[];
